@@ -7,12 +7,13 @@ class Edge;
 class Vertex{
 public:
     //std::string text;    
-    float value1;
+    int value1;
+    std::vector<Vertex>::iterator vIt;
     sf::Vector2f position;
+    sf::Vector2f speed;    
     //int value2;
     std::vector<std::vector<Edge>::iterator> edgesOf;
 };
-
 class Edge{
 public:
     //std::string text;
@@ -29,8 +30,7 @@ public:
     
     GraphGraphics graphics;
     Graph();
-    void CalculateForces();
-	void ApplyForces();
+    void MoveVertices();
     void AddEdge(int,int);
     void AddVertex(int);
     void Draw(sf::RenderWindow&);

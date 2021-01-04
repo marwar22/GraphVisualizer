@@ -15,7 +15,7 @@ int main()
 		//throw("NIE MA CZCIONKI\n");
     
     window.setFramerateLimit(100);
-    int n=20, m=0;
+    int n = 3, m = 0;
     //std::cin >> n >> m; 
     {
         int n2 = n,m2 = m;
@@ -36,8 +36,8 @@ int main()
             if (event.type == sf::Event::Closed)
                 window.close();
         }
-
-        window.clear(sf::Color::White);
+        G.MoveVertices();
+        window.clear(sf::Color::White);        
         G.Draw(window);
         window.display();
     }
