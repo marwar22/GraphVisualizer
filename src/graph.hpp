@@ -1,37 +1,61 @@
-#include <string>
+#ifndef GRAPH_HPP
+#define GRAPH_HPP
+
+#include <SFML/Graphics.hpp>
+#include <SFML/Window.hpp>
+#include <SFML/System.hpp>
 #include <vector>
-#include "graphics.cpp"
-//class Vertex;
-class Edge;
+#define N 1000
+typedef std::pair<int, int> pii;
+typedef std::vector<int> VI;
+typedef std::vector<std::pair<int, int> > VII;
 
 class Vertex{
 public:
-    //std::string text;    
-    int value1;
-    std::vector<Vertex>::iterator vIt;
-    sf::Vector2f position;
-    sf::Vector2f speed;    
-    //int value2;
-    std::vector<std::vector<Edge>::iterator> edgesOf;
-};
-class Edge{
-public:
-    //std::string text;
-    std::vector<Vertex>::iterator v1;
-    std::vector<Vertex>::iterator v2;    
-    //int value1;
-    //int value2;    
+	int id;///5
+    sf::Text text1;
+	sf::Vector2f position;
+	sf::Vector2f force;
+    std::vector<int> edgesIdFrom;/////  1 2 3 4 ..  7 8 9 10 11 12 13
+    std::vector<int> edgesIdTo;
+	sf::Sprite circle;
+	Vertex();
+	Vertex(sf::Vector2f, int, sf::Font&);
 };
 
-class Graph{
+class Edge{
 public:
-    std::vector<Vertex>  vertices;
-    std::vector<Edge> edges;
-    
-    GraphGraphics graphics;
+    int id, idVertexFrom, idVertexTo;
+    int weight1, weight2;
+    bool isHighlighted;
+
+    Edge();
+    Edge(int,int,int,int);
+};	
+
+class Graph {
+public:
+    std::vector<Vertex> vertices; //wszystkie wierzchołki
+	std::vector<Edge> allEdges; //wszystkie krawędzie
+    sf::Font font;
+    bool isDirected, isWeighted;
+
+	float GravityForce(float);
+	float RepulsionForce(float);
+	float AttractionForce(float);//w argumentach indeksy wierzcholkow
+
+	void CalculateForces();
+	void ApplyForces();
+
+    void AddEdge(int,int,int,int);
+    void AddVertex(sf::Vector2f);
+    void RemoveEdgeFromVertex(int,int);
+	void RemoveEdge(int);
+    void RemoveVertex(int);
+
+
+	void Draw(sf::RenderWindow&);
     Graph();
-    void MoveVertices();
-    void AddEdge(int,int);
-    void AddVertex(int);
-    void Draw(sf::RenderWindow&);
 };
+
+#endif
