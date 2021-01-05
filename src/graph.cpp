@@ -26,15 +26,13 @@ float GetAngleByPoints(sf::Vector2f v,sf::Vector2f w) {
 float getLength(sf::Vector2f p1, sf::Vector2f p2) {//odleglosc miedzy dwoma punktami w przestrzeni
 	return sqrtf(pow(p1.x - p2.x, 2) + pow(p1.y - p2.y, 2));
 }
-
-Graph::Graph(sf::Font * f)
-{
-    // if (!font.loadFromFile("Fonts/ABeeZee-Regular.ttf"))
-	//	throw("NIE MA CZCIONKI\n");
+Graph::Graph(sf::Font * f) {
     font = f;
     isDirected = false;
     isWeighted = false;
 }
+
+Graph::Graph(){}
 
 Edge::Edge(){
     idVertexFrom = idVertexTo = weight1 = weight2 = -1;

@@ -5,16 +5,17 @@
 #include <SFML/Window.hpp>
 #include <SFML/System.hpp>
 #include <vector>
-
-
+#include <functional>
+#include <string>
 
 class Button{
 public:
     sf::RectangleShape rectangle;
     sf::Text text;
-    void (*OnClick)();
+    std::function<void(Button&,sf::Event&)> OnClick;
     void draw(sf::RenderWindow&);
-    Button(int, int, int, int, std::string, sf::Font *);
+    void SetColor(sf::Color);
+    Button(int, int, int, int, std::string, sf::Font *,std::function<void(Button&,sf::Event&)>);
     Button();
 };
 

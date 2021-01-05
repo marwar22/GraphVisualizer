@@ -2,14 +2,10 @@
 #include <SFML/Window.hpp>
 #include <SFML/System.hpp>
 #include "button.hpp"
-#include <string>
-#include <iostream> //tmp
-void Add() {
-    std::cerr<<"123"<<std::endl;
-    return;
-}
 
-Button::Button(int x, int y, int width, int height, std::string napis, sf::Font* font){
+
+Button::Button() {}
+Button::Button(int x, int y, int width, int height, std::string napis, sf::Font* font,std::function<void(Button&,sf::Event&)> __OnClick){
     rectangle.setPosition(x,y);
     rectangle.setSize(sf::Vector2f(width,height));
     rectangle.setFillColor(sf::Color::White);
@@ -21,12 +17,14 @@ Button::Button(int x, int y, int width, int height, std::string napis, sf::Font*
     text.setFillColor(sf::Color::Black);
     //text.setOutlineColor(sf::Color::Black);
     text.setOrigin(sf::Vector2f(text.getGlobalBounds().width/2,text.getGlobalBounds().height/2));
-    text.setPosition(x + width / 2, y + height / 2 - 2);
-    
-    OnClick = &Add;
+    text.setPosition(x + width / 2, y + height / 2 - 2);    
+    OnClick = __OnClick;
 }
 
-Button::Button() {}
+void Button::SetColor(sf::Color color) {
+    rectangle.setOutlineColor(color);
+    text.setFillColor(color);
+}
 
 void Button::draw(sf::RenderWindow& window) {
       window.draw(rectangle);

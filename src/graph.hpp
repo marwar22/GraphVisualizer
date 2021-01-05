@@ -11,7 +11,6 @@ typedef std::vector<int> VI;
 typedef std::vector<std::pair<int, int> > VII;
 
 
-
 class Edge{
 public:
     int id, idVertexFrom, idVertexTo;
@@ -42,9 +41,9 @@ public:
 	void RemoveEdge(int);
     void RemoveVertex(int);
 
-
 	void Draw(sf::RenderWindow&);
     Graph( sf::Font *);
+    Graph();
 };
 
 #endif

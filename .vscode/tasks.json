@@ -8,6 +8,7 @@
 			"args": [
 				"-g",
 				"src/*.cpp",
+				"src/graphics/*.cpp",
 				"-o",
 				"ProjektProgram",
 				"-lsfml-graphics",
