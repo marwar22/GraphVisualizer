@@ -5,28 +5,26 @@
 #include <SFML/System.hpp>
 #include <math.h>
 #include <iostream>
+#include <algorithm>
 #define pb push_back
 #define rep(i,a,b) for(int i = a; i <= b; i++)
 #define M_RAD 57.2957
 
-float getAngleByCoordinates(float x, float y)//zwraca kat miedzy osia y+ zgodnie z ruchem wskazowek zegara do punku (x,y)
+
+float GetAngleByCoordinates(float x, float y)//zwraca kat miedzy osia y+ zgodnie z ruchem wskazowek zegara do punku (x,y)
 {
-	if (x == 0) {
-		if (y > 0) return 0.f;
-		else return 180.f;
-	}
-	if (y == 0) {
-		if (x > 0) return 90.f;
-		else return 270.f;
-	}
-	if (x > 0 && y > 0) return 90.f - atan(fabs(y / x)) * M_RAD;
-	if (x > 0 && y < 0) return 90.f + atan(fabs(y / x)) * M_RAD;
-	if (x < 0 && y < 0) return 270.f - atan(fabs(y / x)) * M_RAD;
-	if (x < 0 && y > 0) return 270.f + atan(fabs(y / x)) * M_RAD;
-    return 0;
+    float angle = atan2(-y,-x);
+    if (angle < 0) angle += 2*M_PI;
+    return angle;
 }
 
-float getLenght(sf::Vector2f p1, sf::Vector2f p2) {//odleglosc miedzy dwoma punktami w przestrzeni
+float GetAngleByPoints(sf::Vector2f v,sf::Vector2f w) {
+    float x = v.x - w.x;
+    float y = v.y - w.y;
+    return GetAngleByCoordinates(x,y);
+}
+
+float getLength(sf::Vector2f p1, sf::Vector2f p2) {//odleglosc miedzy dwoma punktami w przestrzeni
 	return sqrtf(pow(p1.x - p2.x, 2) + pow(p1.y - p2.y, 2));
 }
 
@@ -114,6 +112,7 @@ void Graph::RemoveEdgeFromVertex(int id,int v) {
         }
     }
 }
+
 void Graph::RemoveEdge(int id) {
     RemoveEdgeFromVertex(id,allEdges[id].idVertexFrom);
     RemoveEdgeFromVertex(id,allEdges[id].idVertexTo);    
@@ -123,87 +122,115 @@ void Graph::CalculateForces() {
 	rep(i, 0, vertices.size()-1) vertices[i].force = sf::Vector2f(0.f,0.f);
 	//przyciaganie do srodka 800 400
 	rep(i, 0, vertices.size()-1) {
-		float distance = getLenght(sf::Vector2f(800, 400), vertices[i].position);
-		float forceValue = GravityForce(distance);
-		//sf::Vector2f forceVector = sf::Vector2f(800, 400) - vertices[i].position;
-		float angle = getAngleByCoordinates(vertices[i].position.x - 800, vertices[i].position.y - 400);
-		vertices[i].force -= sf::Vector2f(forceValue * sin(angle / M_RAD), forceValue * cos(angle / M_RAD));//- a nie + bo grawitacja przyciaga FIZYKA 
+		float distance = getLength(sf::Vector2f(800, 400), vertices[i].position);
+		float forceValue = CenterGravityForce(distance);
+		float angle = GetAngleByCoordinates(vertices[i].position.x - 800, vertices[i].position.y - 400);
+		sf::Vector2f forces(cos(angle) * forceValue, sin(angle) * forceValue);
+        vertices[i].force += forces;
 	}
 
 	//odpychanie sie wierzcholkow
-	rep(i, 0, vertices.size()-1)
-		rep(j, 0, vertices.size()-1) {
-		float distance = getLenght(vertices[i].position, vertices[j].position);
-		float forceValue = RepulsionForce(distance);
-		//sf::Vector2f forceVector_i_to_j = vertices[i].position - vertices[j].position;
-		//sf::Vector2f forceVector_j_to_i = vertices[j].position - vertices[i].position;
-		float angle1 = getAngleByCoordinates(vertices[i].position.x - vertices[j].position.x, vertices[i].position.y - vertices[j].position.y);
-		float angle2 = (angle1 + 180);
-		if (angle2 > 360) angle2 -= 180;
-		vertices[i].force += sf::Vector2f(forceValue * sin(angle1 / M_RAD), forceValue * cos(angle1 / M_RAD));
-		vertices[i].force += sf::Vector2f(forceValue * sin(angle2 / M_RAD), forceValue * cos(angle2 / M_RAD));
+	for (int i = 0; i < vertices.size(); ++i) {
+		for (int j = i+1; j < vertices.size(); ++j) {
+		float distance = getLength(vertices[i].position, vertices[j].position);
+		float forceValue = VertexGravityForce(distance);
+		float angle = GetAngleByCoordinates(vertices[i].position.x - vertices[j].position.x, vertices[i].position.y - vertices[j].position.y);
+        sf::Vector2f forces(cos(angle) * forceValue, sin(angle) * forceValue);
+		vertices[i].force += forces;
+        vertices[j].force -= forces;
+        }
 	}
 
 	//przyciaganie sie na krawedziach
-	/*for (auto edge : allEdges) {
-        int i = edge.idVertexFrom;
-        int j = edge.idVertexTo;
-		float distance = getLenght(vertices[i].position, vertices[j].position);
-		float forceValue = AttractionForce(distance);
-		//sf::Vector2f forceVector_i_to_j = vertices[i].position - vertices[j].position;
-		//sf::Vector2f forceVector_j_to_i = vertices[j].position - vertices[i].position;
-		float angle1 = getAngleByCoordinates(vertices[i].position.x - vertices[j].position.x, vertices[i].position.y - vertices[j].position.y);
-		float angle2 = (angle1 + 180);
-		if (angle2 > 360) angle2 -= 180;
-		vertices[i].force -= sf::Vector2f(forceValue * sin(angle1 / M_RAD), forceValue * cos(angle1 / M_RAD));
-		vertices[i].force -= sf::Vector2f(forceValue * sin(angle2 / M_RAD), forceValue * cos(angle2 / M_RAD));
-        //vertices[j].force += sf::Vector2f(forceValue * sin(angle1 / M_RAD), forceValue * cos(angle1 / M_RAD));
-		//vertices[j].force += sf::Vector2f(forceValue * sin(angle2 / M_RAD), forceValue * cos(angle2 / M_RAD));	
-    }*/
+	for (auto edge : allEdges) {
+        int v = edge.idVertexFrom;
+        int w = edge.idVertexTo;
+
+		float distance = getLength(vertices[v].position, vertices[w].position);
+		float forceValue = EdgeAttractionForce(distance);
+		float angle = GetAngleByCoordinates(vertices[v].position.x - vertices[w].position.x, vertices[v].position.y - vertices[w].position.y);
+        
+        //std::cerr<<v<<" "<<w<<" "<<angle*180/(M_PI)<<std::endl;
+        //std::cerr<< cos(angle) * forceValue<<" "<< sin(angle) * forceValue<<std::endl;
+
+        sf::Vector2f forces(cos(angle) * forceValue, sin(angle) * forceValue);
+        vertices[v].force += forces;
+        vertices[w].force -= forces;
+	
+    }
 }
 
 void Graph::ApplyForces() {
 	rep(i, 0, vertices.size()-1) {
-		sf::Vector2f delta = sf::Vector2f(vertices[i].force.x * 0.01, vertices[i].force.y * 0.01);
-		if (fabs(delta.x) < 0.5) delta.x = 0;
-		if (fabs(delta.y) < 0.5) delta.y = 0;
+		sf::Vector2f delta = sf::Vector2f(vertices[i].force.x , vertices[i].force.y );
+        //std::cerr<<"F "<< i <<" "<<delta.x<<" "<<delta.y<<std::endl;
+
+        if (delta.x > 10) delta.x  = 10;
+        if (delta.x < -10) delta.x = -10;
+        if (delta.y > 10) delta.y  = 10;
+        if (delta.y < -10) delta.y = -10;
 
 		vertices[i].position += delta;
+        //#warning zmienić na stałe poniżej
+        if (vertices[i].position.x < 50) vertices[i].position.x = 50;
+        if (vertices[i].position.x > 1550) vertices[i].position.x = 1550;
+        if (vertices[i].position.y < 50) vertices[i].position.y = 50;
+        if (vertices[i].position.y > 750) vertices[i].position.y = 750;
+        
 		vertices[i].circle.setPosition(vertices[i].circle.getPosition() + delta);
 		vertices[i].text1.setPosition(vertices[i].text1.getPosition() + delta);
 	}
 }
+const float OPT_V_DST= 200.f;
+const float OPT_E_DST= 100.f;
+float Graph::VertexGravityForce(float distance) {
+    if (distance >= 270) return 1/(distance-250);
 
-float Graph::RepulsionForce(float distance) {
-	if (distance >= 100.f) return 0.f;
-	//std::cout<<"rep: "<<(distance - 100.f) * (distance - 100.f) + 50.f<<std::endl;
-	return (distance - 100.f) * (distance - 100.f) + 50.f;
+    float force = distance - OPT_V_DST;
+    force *= force;
+    force /= -1000.f;
+    if (distance > OPT_V_DST) force /= -100.f;
+    //std::cerr<<"VGF"<<distance / 1000.f<<" "<<force<<std::endl;
+    return std::min(0.05f,force);
 }
 
-float Graph::AttractionForce(float distance) {
-	if (distance <= 100.f) return 0.f;
-	std::cout<<"attr --- distance:  "<<distance<<"    force: "<<(distance - 100.f) * (distance - 100.f) / 5.f + 50.f<<std::endl;
-	return (distance - 100.f) * (distance - 100.f) / 5.f + 50.f;
+float Graph::EdgeAttractionForce(float distance) {
+    float force = distance - OPT_E_DST;
+    force *= force;
+    force /= 5000.f;
+    if (distance < OPT_E_DST) force *= -1.f; 
+    //std::cerr<<"EAF"<<distance / 400.f<<" "<<force<<std::endl;
+    return std::min(distance / 100.f, force);
 }
 
-float Graph::GravityForce(float distance) {
-	return 100.f;
+float Graph::CenterGravityForce(float distance) {
+	float force = distance;
+    force *= force;
+    force /= 10000000.f;
+    return force;
 }
+const float V_RADIUS = 20.f;
 void Graph::Draw(sf::RenderWindow& window){
-    sf::CircleShape shape(20.f,100);
-    shape.setFillColor(sf::Color::Green);
+    
+    
+     
+     
+    
+    for (Edge edge: allEdges) {        
+        float distance = getLength(vertices[edge.idVertexFrom].position,vertices[edge.idVertexTo].position);
+        float angle = GetAngleByPoints(vertices[edge.idVertexFrom].position,vertices[edge.idVertexTo].position);       
+        sf::RectangleShape line(sf::Vector2f(distance, 5));
+        line.setFillColor(sf::Color::Black);
+        line.setPosition(vertices[edge.idVertexFrom].position);
+        line.setRotation(angle*(180/M_PI));
+        window.draw(line);
+
+    }
+    sf::CircleShape shape(V_RADIUS,100);
+    shape.setFillColor(sf::Color::Blue);
     
     for (Vertex v: vertices) {
-        shape.setPosition(sf::Vector2f(v.position.x, v.position.y));
+        shape.setPosition(sf::Vector2f(v.position.x - V_RADIUS, v.position.y - V_RADIUS));
         window.draw(shape);
-    }
-    sf::VertexArray lines(sf::LinesStrip, 20);
-     
-    for (Edge edge: allEdges) {
-        lines[0].position = vertices[edge.idVertexFrom].position;
-        lines[0].color  = sf::Color::Red;
-        lines[1].position = vertices[edge.idVertexTo].position;
-        lines[1].color  = sf::Color::Red;
-        window.draw(lines);
     }
 }

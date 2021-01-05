@@ -40,9 +40,9 @@ public:
     sf::Font font;
     bool isDirected, isWeighted;
 
-	float GravityForce(float);
-	float RepulsionForce(float);
-	float AttractionForce(float);//w argumentach indeksy wierzcholkow
+	float CenterGravityForce(float);
+	float VertexGravityForce(float);
+	float EdgeAttractionForce(float);//w argumentach indeksy wierzcholkow
 
 	void CalculateForces();
 	void ApplyForces();
