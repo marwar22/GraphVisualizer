@@ -1,15 +1,14 @@
-#include "graph.hpp"
-#include <string>
 #include <SFML/Graphics.hpp>
 #include <SFML/Window.hpp>
 #include <SFML/System.hpp>
+#include "graph.hpp"
 #include <math.h>
 #include <iostream>
 #include <algorithm>
+#include <string>
 #define pb push_back
 #define rep(i,a,b) for(int i = a; i <= b; i++)
 #define M_RAD 57.2957
-
 
 float GetAngleByCoordinates(float x, float y)//zwraca kat miedzy osia y+ zgodnie z ruchem wskazowek zegara do punku (x,y)
 {
@@ -28,49 +27,13 @@ float getLength(sf::Vector2f p1, sf::Vector2f p2) {//odleglosc miedzy dwoma punk
 	return sqrtf(pow(p1.x - p2.x, 2) + pow(p1.y - p2.y, 2));
 }
 
-Graph::Graph()
+Graph::Graph(sf::Font * f)
 {
-    if (!font.loadFromFile("Fonts/ABeeZee-Regular.ttf"))
-		throw("NIE MA CZCIONKI\n");
-        
+    // if (!font.loadFromFile("Fonts/ABeeZee-Regular.ttf"))
+	//	throw("NIE MA CZCIONKI\n");
+    font = f;
     isDirected = false;
     isWeighted = false;
-}
-
-void Graph::RemoveVertex(int id) {
-    
-    for (int w: vertices[id].edgesIdFrom) RemoveEdge(w);
-    for (int w: vertices[id].edgesIdTo) RemoveEdge(w);
-    
-    std::swap(vertices[id], vertices.back());
-    vertices.pop_back();
-    if (id == 0) return;
-    vertices[id].id = id;
-    for (int w: vertices[id].edgesIdFrom) {
-        if (allEdges[w].idVertexFrom == vertices.size()) allEdges[w].idVertexFrom = id;
-        if (allEdges[w].idVertexTo   == vertices.size()) allEdges[w].idVertexTo   = id;
-    }
-    for (int w: vertices[id].edgesIdTo) {
-        if (allEdges[w].idVertexFrom == vertices.size()) allEdges[w].idVertexFrom = id;
-        if (allEdges[w].idVertexTo   == vertices.size()) allEdges[w].idVertexTo   = id;
-    }
-}
-
-void Graph::AddVertex(sf::Vector2f position){
-    int newId = vertices.size();
-    sf::Text text1("",font);
-
-    Vertex vertexToAdd = Vertex(position, newId, font);
-    vertices.push_back(vertexToAdd);
-}
-
-
-Vertex::Vertex(sf::Vector2f __position, int __id, sf::Font& font){
-    position = __position;
-	id = __id;
-    text1.setString(std::to_string(id));
-    text1.setFont(font);
-    force = sf::Vector2f(0.f,0.f);
 }
 
 Edge::Edge(){
@@ -85,7 +48,6 @@ Edge::Edge(int v, int w, int w1, int w2) {
     weight2 = w2;
     isHighlighted = false;
 }
-
 
 void Graph::AddEdge(int v,int w, int weight1=0, int weight2=0) {
 	Edge edge = Edge(v, w, weight1, weight2);
@@ -206,31 +168,31 @@ float Graph::EdgeAttractionForce(float distance) {
 float Graph::CenterGravityForce(float distance) {
 	float force = distance;
     force *= force;
-    force /= 10000000.f;
+    force /= 5000000.f;
     return force;
 }
-const float V_RADIUS = 20.f;
+const float V_RADIUS = 10.f;
+const float LINE_WIDTH = 3.f;
 void Graph::Draw(sf::RenderWindow& window){
-    
-    
-     
-     
-    
     for (Edge edge: allEdges) {        
         float distance = getLength(vertices[edge.idVertexFrom].position,vertices[edge.idVertexTo].position);
         float angle = GetAngleByPoints(vertices[edge.idVertexFrom].position,vertices[edge.idVertexTo].position);       
-        sf::RectangleShape line(sf::Vector2f(distance, 5));
+        sf::RectangleShape line(sf::Vector2f(distance, LINE_WIDTH));
+        line.setOrigin(sf::Vector2f(0, LINE_WIDTH/2));
         line.setFillColor(sf::Color::Black);
         line.setPosition(vertices[edge.idVertexFrom].position);
         line.setRotation(angle*(180/M_PI));
         window.draw(line);
 
     }
+
     sf::CircleShape shape(V_RADIUS,100);
+    shape.setOrigin(sf::Vector2f(shape.getGlobalBounds().width/2,shape.getGlobalBounds().height/2));
     shape.setFillColor(sf::Color::Blue);
     
     for (Vertex v: vertices) {
-        shape.setPosition(sf::Vector2f(v.position.x - V_RADIUS, v.position.y - V_RADIUS));
+        shape.setPosition(sf::Vector2f(v.position.x, v.position.y));
+        shape.setFillColor(v.color);
         window.draw(shape);
     }
 }

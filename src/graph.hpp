@@ -5,23 +5,12 @@
 #include <SFML/Window.hpp>
 #include <SFML/System.hpp>
 #include <vector>
-#define N 1000
+#include "vertex.hpp"
 typedef std::pair<int, int> pii;
 typedef std::vector<int> VI;
 typedef std::vector<std::pair<int, int> > VII;
 
-class Vertex{
-public:
-	int id;///5
-    sf::Text text1;
-	sf::Vector2f position;
-	sf::Vector2f force;
-    std::vector<int> edgesIdFrom;/////  1 2 3 4 ..  7 8 9 10 11 12 13
-    std::vector<int> edgesIdTo;
-	sf::Sprite circle;
-	Vertex();
-	Vertex(sf::Vector2f, int, sf::Font&);
-};
+
 
 class Edge{
 public:
@@ -37,7 +26,7 @@ class Graph {
 public:
     std::vector<Vertex> vertices; //wszystkie wierzchołki
 	std::vector<Edge> allEdges; //wszystkie krawędzie
-    sf::Font font;
+    sf::Font * font;
     bool isDirected, isWeighted;
 
 	float CenterGravityForce(float);
@@ -55,7 +44,7 @@ public:
 
 
 	void Draw(sf::RenderWindow&);
-    Graph();
+    Graph( sf::Font *);
 };
 
 #endif
