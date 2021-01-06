@@ -11,7 +11,7 @@
 
 
 
-std::mt19937 rnd(1234567);
+std::mt19937 rnd(1234);
 int los(int mi,int mx) {return rnd()%(mx-mi+1)+mi;}
 int main()
 {
@@ -19,7 +19,7 @@ int main()
     //app.buttons[0] = Button(1000,600,200,50,"przycisk",&app.font,SetTextToMousePosition);    
     //Button B2(1000,700,200,50,"przycisk2",&app.font,Test);
     int n = 27, m = 0;
-    for (int i = 0; i < n; ++i) app.G.AddVertex(sf::Vector2f(los(0,1500),los(0,700)));
+    for (int i = 0; i < n; ++i) app.G.AddVertex(sf::Vector2f(los(0,1600),los(0,800)));
     for (int i = 0; i < n; ++i){
         for (int j = i + 1; j < n; ++j) {
             /*int v,w;

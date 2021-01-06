@@ -23,10 +23,13 @@ public:
 	sf::Sprite circle;
     sf::Color color;
 
+	bool isBeingMoved;
+
     void SetColor(sf::Color);
 
 	Vertex();
 	Vertex(sf::Vector2f, int, sf::Font&);
+	void KeepInGraphArea(int width, int height);
 };
 
 #endif

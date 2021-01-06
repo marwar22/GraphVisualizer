@@ -29,11 +29,11 @@ public:
     bool isDirected, isWeighted;
 
 	float CenterGravityForce(float);
-	float VertexGravityForce(float);
+	float VertexRepulsionForce(float);
 	float EdgeAttractionForce(float);//w argumentach indeksy wierzcholkow
 
-	void CalculateForces();
-	void ApplyForces();
+	void CalculateForces(const int width,const int height);
+	void ApplyForces(const int width,const int height);
 
     void AddEdge(int,int,int,int);
     void AddVertex(sf::Vector2f);
@@ -41,7 +41,7 @@ public:
 	void RemoveEdge(int);
     void RemoveVertex(int);
 
-	void Draw(sf::RenderWindow&);
+	void Draw(sf::RenderTarget&);
     Graph( sf::Font *);
     Graph();
 };

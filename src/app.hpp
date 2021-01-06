@@ -9,8 +9,9 @@
 #include "graphics/button.hpp"
 
 enum stan {
-        dodajW, usuwanieW, 
-        dodajK, usuwanieK, 
+        addV, usuwanieV, 
+        addE, usuwanieE, 
+        movingV,
         symulacjaSily,
         algorytm,
         odczytPlik,
@@ -24,8 +25,8 @@ public:
     Graph G;
 
     enum buttonsEnum {
-        buttonDodajW, buttonUsuwanieW,
-        buttonDodajK, buttonUsuwanieK,
+        buttonAddV, buttonUsuwanieV,
+        buttonAddE, buttonUsuwanieE,
         buttonSymulacjaSily,
         buttonOdczyt,
         buttonZapis,
@@ -35,14 +36,19 @@ public:
     };//i wszystkie pozostale algorytmy tez maja button
     std::vector<Button> buttons;
     stan aktualnyStan;//wszystkie stany
-    
+    int holdingVertexId;
+
     void Run();
     void CheckPodswietlenie(sf::Vector2i);
     void Render();
+    void RenderToolBar();
+    void RenderGraphArea();
     Application();
 
     void HandleEvent(sf::Event &event);
     void HandleMouseButtonPressed(sf::Event &event);
+    void HandleMouseButtonReleased(sf::Event &event);
+    void HandleMouseMoved(sf::Event &event);
 };
 
 

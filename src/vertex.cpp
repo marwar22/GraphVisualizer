@@ -1,5 +1,3 @@
-#include "vertex.hpp"
-#include "graph.hpp"
 #include <string>
 #include <SFML/Graphics.hpp>
 #include <SFML/Window.hpp>
@@ -7,6 +5,9 @@
 #include <math.h>
 #include <iostream>
 #include <algorithm>
+#include "vertex.hpp"
+#include "graph.hpp"
+#include "utils.cpp"
 
 Vertex::Vertex(sf::Vector2f __position, int __id, sf::Font& font){
     position = __position;
@@ -15,12 +16,18 @@ Vertex::Vertex(sf::Vector2f __position, int __id, sf::Font& font){
     text1.setFont(font);
     force = sf::Vector2f(0.f,0.f);
     color = sf::Color::Red;
+    isBeingMoved = false;
 }
 
 void Vertex::SetColor(sf::Color temp_color){
     color = temp_color;
 }
-
+void Vertex::KeepInGraphArea(int width, int height) {
+        if (position.x < GRAPH_AREA_BORDER)          position.x = GRAPH_AREA_BORDER;
+        if (position.x > width  - GRAPH_AREA_BORDER) position.x = width  - GRAPH_AREA_BORDER;
+        if (position.y < GRAPH_AREA_BORDER)          position.y = GRAPH_AREA_BORDER;
+        if (position.y > height - GRAPH_AREA_BORDER) position.y = height - GRAPH_AREA_BORDER;
+}
 void Graph::AddVertex(sf::Vector2f position){
     int newId = vertices.size();
     sf::Text text1("",*font);
