@@ -16,9 +16,9 @@ public:
     int id, idVertexFrom, idVertexTo;
     int weight1, weight2;
     bool isHighlighted;
-
+    sf::Text t1, t2;
     Edge();
-    Edge(int,int,int,int);
+    Edge(int,int,int,int,sf::Font*);
 };	
 
 class Graph {
@@ -36,6 +36,7 @@ public:
 	void ApplyForces(const int width,const int height);
 
     void AddEdge(int,int,int,int);
+    void ChangeAll(int,int);
     void AddVertex(sf::Vector2f);
     void RemoveEdgeFromVertex(int,int);
 	void RemoveEdge(int);

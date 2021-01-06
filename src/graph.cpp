@@ -8,7 +8,7 @@
 #include "graph.hpp"
 #include "utils.cpp"
 #define pb push_back
-#define rep(i,a,b) for(int i = a; i <= b; i++)
+#define rep(i,a,b) for(int i = (int)a; i <= (int)b; i++)
 #define M_RAD 57.2957
 
 float GetAngleByCoordinates(float x, float y)//zwraca kat miedzy osia y+ zgodnie z ruchem wskazowek zegara do punku (x,y)
@@ -40,16 +40,24 @@ Edge::Edge(){
     isHighlighted = false;
 }
 
-Edge::Edge(int v, int w, int w1, int w2) {
+Edge::Edge(int v, int w, int w1, int w2,sf::Font *font) {
     idVertexFrom = v;
     idVertexTo = w;
     weight1 = w1;
     weight2 = w2;
+    t1.setFont(*font);
+    t2.setFont(*font);
+    t1.setString(std::to_string(w1));
+    t2.setString(std::to_string(w1));
+    t1.setCharacterSize(15);
+    t2.setCharacterSize(15);
+    t1.setOrigin(sf::Vector2f(t1.getGlobalBounds().width/2,t1.getGlobalBounds().height/2));
+    t2.setOrigin(sf::Vector2f(t2.getGlobalBounds().width/2,t2.getGlobalBounds().height/2));
     isHighlighted = false;
 }
 
 void Graph::AddEdge(int v,int w, int weight1=0, int weight2=0) {
-	Edge edge = Edge(v, w, weight1, weight2);
+	Edge edge = Edge(v, w, weight1, weight2,font);
 	
 	edge.id = allEdges.size();
     vertices[edge.idVertexFrom].edgesIdTo.pb(edge.id);
@@ -74,13 +82,43 @@ void Graph::RemoveEdgeFromVertex(int id,int v) {
     }
 }
 
+
 void Graph::RemoveEdge(int id) {
+    std::cerr<<"Usuwanie edge "<<id<<" "<<allEdges[id].idVertexFrom<<" "<<allEdges[id].idVertexTo<<std::endl;
     RemoveEdgeFromVertex(id,allEdges[id].idVertexFrom);
-    RemoveEdgeFromVertex(id,allEdges[id].idVertexTo);    
+    RemoveEdgeFromVertex(id,allEdges[id].idVertexTo);
+    std::swap(allEdges[id],allEdges.back());
+    allEdges.pop_back();
+    for (int &v: vertices[allEdges[id].idVertexFrom].edgesIdFrom) {
+        if (v == allEdges.size()) {
+            v = id;
+            break;
+        }
+    }
+    for (int &v: vertices[allEdges[id].idVertexTo].edgesIdTo) {
+        if (v == allEdges.size()) {
+            v = id;
+            break;
+        }
+    }    
+    for(int i=0; i<allEdges.size(); i++)
+        allEdges[i].id = i;
+    
+
+    std::cerr<<"\n\npo usunieciu"<<std::endl;
+    for(Vertex v2: vertices) {
+        std::cerr<<"V: "<<v2.id<<std::endl;
+    }
+                        
+    std::cerr<<"edges:"<<std::endl;
+    for(Edge e2: allEdges) {
+        std::cerr<<"E: "<<e2.id<<" "<<e2.idVertexFrom<<", "<<e2.idVertexTo<<std::endl;
+    }
 }
 
 void Graph::CalculateForces(const int width,const int height) {
-	rep(i, 0, vertices.size()-1) vertices[i].force = sf::Vector2f(0.f,0.f);
+	//rep(i, 0, vertices.size()-1)
+    for (Vertex &v:vertices) v.force = sf::Vector2f(0.f,0.f);
 	//przyciaganie do srodka 800 400
 	rep(i, 0, vertices.size()-1) {
 		float distance   = getLength(sf::Vector2f(width/2, height/2), vertices[i].position);
@@ -182,7 +220,10 @@ void Graph::Draw(sf::RenderTarget& window){
         line.setPosition(vertices[edge.idVertexFrom].position);
         line.setRotation(angle*(180/M_PI));
         window.draw(line);
-
+        edge.t1.setPosition((vertices[edge.idVertexFrom].position.x + vertices[edge.idVertexTo].position.x)/2,(vertices[edge.idVertexFrom].position.y + vertices[edge.idVertexTo].position.y)/2);
+        edge.t2.setPosition((vertices[edge.idVertexFrom].position.x + vertices[edge.idVertexTo].position.x)/2,(vertices[edge.idVertexFrom].position.y + vertices[edge.idVertexTo].position.y)/2+20);
+        window.draw(edge.t1);
+        //window.draw(edge.t2);
     }
 
     sf::CircleShape shape(V_RADIUS,100);
@@ -193,5 +234,9 @@ void Graph::Draw(sf::RenderTarget& window){
         shape.setPosition(sf::Vector2f(v.position.x, v.position.y));
         shape.setFillColor(v.color);
         window.draw(shape);
+        if(v.id < 10) v.text1.setPosition(sf::Vector2f(v.position.x, v.position.y- 3));
+        else if(v.id < 100) v.text1.setPosition(sf::Vector2f(v.position.x + 3, v.position.y - 3));
+        else v.text1.setPosition(sf::Vector2f(v.position.x + 6, v.position.y - 3));
+        window.draw(v.text1);
     }
 }

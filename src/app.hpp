@@ -9,13 +9,13 @@
 #include "graphics/button.hpp"
 
 enum stan {
-        addV, usuwanieV, 
-        addE, usuwanieE, 
+        addV, removeV, 
+        addE, removeE, 
         movingV,
-        symulacjaSily,
-        algorytm,
-        odczytPlik,
-        zapisPlik
+        simulateForce,
+        algorithm,
+        readFile,
+        saveFile
 };
 
 class Application{
@@ -24,19 +24,20 @@ public:
     sf::Font font;
     Graph G;
 
-    enum buttonsEnum {
-        buttonAddV, buttonUsuwanieV,
-        buttonAddE, buttonUsuwanieE,
+    /*enum buttonsEnum {
+        buttonAddV, buttonRemoveV,
+        buttonAddE, buttonRemoveE,
         buttonSymulacjaSily,
         buttonOdczyt,
         buttonZapis,
         buttonDfs,
         buttonPokazKlik, buttonPokazPozycje,
         buttonBfs
-    };//i wszystkie pozostale algorytmy tez maja button
+    };*///i wszystkie pozostale algorytmy tez maja button
     std::vector<Button> buttons;
     stan aktualnyStan;//wszystkie stany
     int holdingVertexId;
+    int firstVertexId, secondVertexId;
 
     void Run();
     void CheckPodswietlenie(sf::Vector2i);
