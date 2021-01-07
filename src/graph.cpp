@@ -34,6 +34,16 @@ Graph::Graph(sf::Font * f) {
     isWeighted = false;
 }
 
+Graph::Graph(Graph* g){
+    vertices = std::vector<Vertex>(g->vertices);
+    allEdges = std::vector<Edge>(g->allEdges);
+
+    font = g->font;
+    isDirected = g->isDirected;
+    isWeighted = g->isWeighted;
+}
+
+
 Graph::Graph(){}
 
 void Graph::CalculateForces(const int width,const int height) {

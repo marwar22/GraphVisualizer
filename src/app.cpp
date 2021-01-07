@@ -8,6 +8,15 @@
 #include "graph.hpp"
 #include "app.hpp"
 #include "utils.hpp"
+#include "algorithms/algorithms.hpp"
+
+
+#include <cassert>
+#define assertm(exp, msg) assert(((void)msg, exp))
+
+bool zeroV = true;
+void *sG;
+//assert(zeroV || G->vertices.size() > 0);
 
 std::mt19937 rnd2(1234);
 int los0(int mi,int mx) {return rnd2()%(mx-mi+1)+mi;}
@@ -37,13 +46,12 @@ void ButtonStepRight(Application    &app,Button &thisButton,sf::Event &event) {
 void ButtonStepLeft(Application     &app,Button &thisButton,sf::Event &event) {
     app.stepLista.GoLeft();}
 void ButtonRunAlgorithm(Application &app,Button &thisButton,sf::Event &event) {
-    app.stepLista = app.algorithms[0](&(app.G));
+    app.stepLista.ClearStates();
+    app.algorithms[0](&(app.G),&app.stepLista);
     app.aktualnyStan = algorithmR;}
 void SetTextToMousePosition(Application &app,Button &thisButton,sf::Event &event) {   
     thisButton.text.setString(std::to_string(event.mouseButton.x) + "x "+ std::to_string(event.mouseButton.y)+ "y");}
 
-StepList ColorsAlgorithm(Graph *G);
-//kolejne algorytmy
 
 Application::Application()
 {
@@ -51,11 +59,14 @@ Application::Application()
 		throw("NIE MA CZCIONKI\n");
     G = Graph(&font);
     stepLista = StepList(&G);
+    sG = &G;
     aktualnyStan    = addV;
     holdingVertexId = -1;
     sf::ContextSettings settings;
     settings.antialiasingLevel = 0;
     
+    
+    algorithms.push_back(DFS);
     algorithms.push_back(ColorsAlgorithm);
 
     buttons.push_back(Button(50,24,195,45,"Dodaj wierzcholek",  &font,ButtonAddVertex));
@@ -123,8 +134,7 @@ void Application::CheckPodswietlenie(sf::Vector2i mousePosition) {
 void Application::Run() {
     for(Vertex v2: G.vertices) {
         std::cerr<<"V: "<<v2.id<<std::endl;
-    }
-                    
+    }    
     std::cerr<<"edges:"<<std::endl;
     for(Edge e2:G.allEdges) {
         std::cerr<<"E: "<<e2.id<<" "<<e2.idVertexFrom<<", "<<e2.idVertexTo<<std::endl;}
@@ -135,9 +145,11 @@ void Application::Run() {
         while (window.pollEvent(event)) {HandleEvent(event);}
 
         sf::Vector2i mousePosition = sf::Mouse::getPosition(window);
-
-      
-
+        //stepLista.currentStep                
+        //std::cerr<<"steplista: "<<stepLista.G->vertices.size()<<" <-> "<< stepLista.G <<"\n";
+        std::cerr<<(stepLista.G == sG);
+        //assert((zeroV) || (    (stepLista.G->vertices[0].id >= 0 && stepLista.G->vertices[0].id <= 2) && stepLista.currentStep >= -1   ));
+        
         if(aktualnyStan == simulateForce)
         {
             G.CalculateForces(window.getSize().x,window.getSize().y-TOOLBAR_HEIGHT);//to wtedy i tlyko wtedy gdy aktualny stan na symulacje sily
@@ -159,6 +171,7 @@ void Application::Render() {
     RenderToolBar();
     window.display();
 }
+
 void Application::RenderGraphArea(){
     sf::ContextSettings settings;
     settings.antialiasingLevel = 8;
@@ -175,6 +188,7 @@ void Application::RenderGraphArea(){
     GraphAreaSprite.setPosition(0,TOOLBAR_HEIGHT);
     window.draw(GraphAreaSprite);    
 }
+
 void Application::RenderToolBar() {
     sf::ContextSettings settings;
     settings.antialiasingLevel = 8;

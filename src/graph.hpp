@@ -33,6 +33,7 @@ public:
 	void Draw(sf::RenderTarget&);
     Graph( sf::Font *);
     Graph();
+    Graph(Graph*);
 };
 
 #endif

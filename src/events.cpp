@@ -8,6 +8,8 @@
 #include "graphics/button.hpp"
 #include "utils.hpp"
 
+extern int zeroV;
+extern void *sG;
 void Application::HandleMouseButtonPressed(sf::Event &event) {
     switch( aktualnyStan )
     {
@@ -67,6 +69,7 @@ void Application::HandleMouseButtonPressed(sf::Event &event) {
                 sf::Vector2f cords;
                 cords.x = event.mouseButton.x;
                 cords.y = event.mouseButton.y - TOOLBAR_HEIGHT;
+                zeroV = false;
                 G.AddVertex( cords );
             }
             break;

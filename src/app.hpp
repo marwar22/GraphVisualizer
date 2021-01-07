@@ -43,7 +43,7 @@ public:
     int holdingVertexId;
     int firstVertexId, secondVertexId;
 
-    std::vector<std::function<StepList(Graph *)> > algorithms;
+    std::vector<std::function<void(Graph *,StepList*)> > algorithms;
     void Run();
     void CheckPodswietlenie(sf::Vector2i);
     void Render();

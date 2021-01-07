@@ -9,8 +9,8 @@
 #include "../steps.hpp"
 #include "../utils.hpp"
 
-StepList ColorsAlgorithm(Graph *G) {
-    StepList colorStepList = StepList(G);
+void ColorsAlgorithm(Graph *G,StepList *StepListPtr) {
+    //StepList colorStepList = StepList(G);
 
     std::vector<VertexChange> firstVerticesChanges;
     std::vector<EdgeChange> firstEdgesChanges; // docelowo pusty
@@ -19,13 +19,13 @@ StepList ColorsAlgorithm(Graph *G) {
     firstVerticesChanges.push_back(onlyChange);
     Step firstStep = Step(firstVerticesChanges,firstEdgesChanges); 
 
-    colorStepList.InitState(firstStep);
+    StepListPtr->InitState(firstStep);
     //onlyChange.color = 
     //G->vertices[0].color = sf::Color::Cyan;
     firstVerticesChanges[0].color = sf::Color::Cyan;
     Step secondStep = Step(firstVerticesChanges,firstEdgesChanges); 
-    colorStepList.AddState(secondStep);
-    return colorStepList;
+    StepListPtr->AddState(secondStep);
+    //return colorStepList;
 }
 
 /*

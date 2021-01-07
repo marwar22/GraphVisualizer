@@ -10,13 +10,17 @@ struct VertexChange {
     int id;
     int data1, data2;
     sf::Color color;
+    VertexChange();
     VertexChange(int, int, int, sf::Color);
+    VertexChange(Vertex &);
 };
 struct EdgeChange{
     int id;
     int weight1, weight2;
     sf::Color color;
+    EdgeChange();
     EdgeChange(int, int, int, sf::Color);
+    EdgeChange(Edge &);
 };
 
 struct Step{    
@@ -40,5 +44,8 @@ public:
     void ClearStates();
     StepList(Graph*);
     StepList();
+    StepList &operator =(const StepList &__stepList);
+
+    
 };
 #endif
