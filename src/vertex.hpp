@@ -17,10 +17,14 @@ public:
     std::vector<int> edgesIdFrom;
     std::vector<int> edgesIdTo;
     
-    sf::Text text1;
+	int data1, data2;
+
+    sf::Text text1;//sam numer wierzcholka
+	sf::Text subText;
+	sf::Text subText2;
+	
 	sf::Vector2f position;
 	sf::Vector2f force;
-	sf::Sprite circle;
     sf::Color color;
 
 	bool isBeingMoved;

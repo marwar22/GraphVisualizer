@@ -6,7 +6,7 @@
 #include <algorithm>
 #include <string>
 #include "graph.hpp"
-#include "utils.cpp"
+#include "utils.hpp"
 #define pb push_back
 #define rep(i,a,b) for(int i = (int)a; i <= (int)b; i++)
 #define M_RAD 57.2957
@@ -27,6 +27,7 @@ float GetAngleByPoints(sf::Vector2f v,sf::Vector2f w) {
 float getLength(sf::Vector2f p1, sf::Vector2f p2) {//odleglosc miedzy dwoma punktami w przestrzeni
 	return sqrtf(pow(p1.x - p2.x, 2) + pow(p1.y - p2.y, 2));
 }
+
 Graph::Graph(sf::Font * f) {
     font = f;
     isDirected = false;
@@ -34,87 +35,6 @@ Graph::Graph(sf::Font * f) {
 }
 
 Graph::Graph(){}
-
-Edge::Edge(){
-    idVertexFrom = idVertexTo = weight1 = weight2 = -1;
-    isHighlighted = false;
-}
-
-Edge::Edge(int v, int w, int w1, int w2,sf::Font *font) {
-    idVertexFrom = v;
-    idVertexTo = w;
-    weight1 = w1;
-    weight2 = w2;
-    t1.setFont(*font);
-    t2.setFont(*font);
-    t1.setString(std::to_string(w1));
-    t2.setString(std::to_string(w1));
-    t1.setCharacterSize(15);
-    t2.setCharacterSize(15);
-    t1.setOrigin(sf::Vector2f(t1.getGlobalBounds().width/2,t1.getGlobalBounds().height/2));
-    t2.setOrigin(sf::Vector2f(t2.getGlobalBounds().width/2,t2.getGlobalBounds().height/2));
-    isHighlighted = false;
-}
-
-void Graph::AddEdge(int v,int w, int weight1=0, int weight2=0) {
-	Edge edge = Edge(v, w, weight1, weight2,font);
-	
-	edge.id = allEdges.size();
-    vertices[edge.idVertexFrom].edgesIdTo.pb(edge.id);
-    vertices[edge.idVertexTo].edgesIdFrom.pb(edge.id);
-    allEdges.pb(edge);
-}
-
-void Graph::RemoveEdgeFromVertex(int id,int v) {
-    for (int i = 0; i < vertices[v].edgesIdFrom.size(); ++i) {
-        if (vertices[v].edgesIdFrom[i] == id) {
-            std::swap(vertices[v].edgesIdFrom[i],vertices[v].edgesIdFrom.back());
-            vertices[v].edgesIdFrom.pop_back();
-            return;
-        }
-    }
-    for (int i = 0; i < vertices[v].edgesIdTo.size(); ++i) {
-        if (vertices[v].edgesIdTo[i] == id) {
-            std::swap(vertices[v].edgesIdTo[i],vertices[v].edgesIdTo.back());
-            vertices[v].edgesIdTo.pop_back();
-            return;
-        }
-    }
-}
-
-
-void Graph::RemoveEdge(int id) {
-    std::cerr<<"Usuwanie edge "<<id<<" "<<allEdges[id].idVertexFrom<<" "<<allEdges[id].idVertexTo<<std::endl;
-    RemoveEdgeFromVertex(id,allEdges[id].idVertexFrom);
-    RemoveEdgeFromVertex(id,allEdges[id].idVertexTo);
-    std::swap(allEdges[id],allEdges.back());
-    allEdges.pop_back();
-    for (int &v: vertices[allEdges[id].idVertexFrom].edgesIdFrom) {
-        if (v == allEdges.size()) {
-            v = id;
-            break;
-        }
-    }
-    for (int &v: vertices[allEdges[id].idVertexTo].edgesIdTo) {
-        if (v == allEdges.size()) {
-            v = id;
-            break;
-        }
-    }    
-    for(int i=0; i<allEdges.size(); i++)
-        allEdges[i].id = i;
-    
-
-    std::cerr<<"\n\npo usunieciu"<<std::endl;
-    for(Vertex v2: vertices) {
-        std::cerr<<"V: "<<v2.id<<std::endl;
-    }
-                        
-    std::cerr<<"edges:"<<std::endl;
-    for(Edge e2: allEdges) {
-        std::cerr<<"E: "<<e2.id<<" "<<e2.idVertexFrom<<", "<<e2.idVertexTo<<std::endl;
-    }
-}
 
 void Graph::CalculateForces(const int width,const int height) {
 	//rep(i, 0, vertices.size()-1)
@@ -176,7 +96,6 @@ void Graph::ApplyForces(int width,int height) {
 
 		v.position += delta;
         v.KeepInGraphArea(width, height);
-		v.circle.setPosition(v.circle.getPosition() + delta);
 		v.text1.setPosition( v.text1.getPosition()  + delta);
 	}
 }
@@ -219,6 +138,8 @@ void Graph::Draw(sf::RenderTarget& window){
         line.setFillColor(sf::Color::Black);
         line.setPosition(vertices[edge.idVertexFrom].position);
         line.setRotation(angle*(180/M_PI));
+        edge.t1.setString(std::to_string(edge.id));//TA LINIJKA DO USUNIECIA
+
         window.draw(line);
         edge.t1.setPosition((vertices[edge.idVertexFrom].position.x + vertices[edge.idVertexTo].position.x)/2,(vertices[edge.idVertexFrom].position.y + vertices[edge.idVertexTo].position.y)/2);
         edge.t2.setPosition((vertices[edge.idVertexFrom].position.x + vertices[edge.idVertexTo].position.x)/2,(vertices[edge.idVertexFrom].position.y + vertices[edge.idVertexTo].position.y)/2+20);
@@ -231,6 +152,7 @@ void Graph::Draw(sf::RenderTarget& window){
     shape.setFillColor(sf::Color::Blue);
     
     for (Vertex v: vertices) {
+        v.text1.setString(std::to_string(v.id));
         shape.setPosition(sf::Vector2f(v.position.x, v.position.y));
         shape.setFillColor(v.color);
         window.draw(shape);

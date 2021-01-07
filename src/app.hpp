@@ -7,15 +7,17 @@
 #include <vector>
 #include "graph.hpp"
 #include "graphics/button.hpp"
+#include "steps.hpp"
 
 enum stan {
         addV, removeV, 
         addE, removeE, 
         movingV,
         simulateForce,
-        algorithm,
+        algorithmC,
+        algorithmR,
         readFile,
-        saveFile
+        saveFile,
 };
 
 class Application{
@@ -23,7 +25,7 @@ public:
     sf::RenderWindow window;
     sf::Font font;
     Graph G;
-
+    StepList stepLista;
     /*enum buttonsEnum {
         buttonAddV, buttonRemoveV,
         buttonAddE, buttonRemoveE,
@@ -35,10 +37,13 @@ public:
         buttonBfs
     };*///i wszystkie pozostale algorytmy tez maja button
     std::vector<Button> buttons;
+    std::vector<Button> buttonsAlg;
+    std::vector<Button> buttonsAlgR;
     stan aktualnyStan;//wszystkie stany
     int holdingVertexId;
     int firstVertexId, secondVertexId;
 
+    std::vector<std::function<StepList(Graph *)> > algorithms;
     void Run();
     void CheckPodswietlenie(sf::Vector2i);
     void Render();

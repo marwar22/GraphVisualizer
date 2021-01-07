@@ -8,7 +8,7 @@
 #include <algorithm>
 #include "vertex.hpp"
 #include "graph.hpp"
-#include "utils.cpp"
+#include "utils.hpp"
 
 Vertex::Vertex(sf::Vector2f __position, int __id, sf::Font& font){
     position = __position;
@@ -17,6 +17,10 @@ Vertex::Vertex(sf::Vector2f __position, int __id, sf::Font& font){
     text1.setFont(font);
     text1.setOrigin(sf::Vector2f(text1.getGlobalBounds().width/2,text1.getGlobalBounds().height/2));
     text1.setCharacterSize(20);
+    subText.setString("");
+    subText.setFont(font);
+    subText.setOrigin(sf::Vector2f(subText.getGlobalBounds().width/2,subText.getGlobalBounds().height/2));
+    subText.setCharacterSize(20);
     force = sf::Vector2f(0.f,0.f);
     color = sf::Color::Red;
     isBeingMoved = false;
@@ -97,25 +101,10 @@ void Graph::RemoveVertex(int id) {
         //ostatni wierzchołek wszędzie przyjmuje id tego co usuwamy
     */
 
-    // 0,1,2, 3DU ,4,5,6;
-    //lastVId = 6;
 
-    //6 -> czegoś
-    //3 -> czegośB
-    //int lastVId = vertices.size()-1;
     for (int e: vertices.back().edgesIdFrom) allEdges[e].idVertexTo   = id;
-    //E[0] 1 -> 2 //from 1 to 2
-    //allEdges[0].idVertexFrom = 1
-    //allEdges[0].idVertexTo = 2
-
-    //vertices[1].edgesIdFrom = {}
-    //vertices[1].edgesIdTo   = {0} //edgesidto zawiera krawędzie z których 1 prowadzi, czyli 1 -> x, 
-                                    //edgesidto zawiera krawędzie dla których 1 jest "to",czyli takie x, że x -> 1
-    //vertices[2].edgesIdFrom = {0}
-    //vertices[2].edgesIdTo   = {}
-    //1 from wychodzi krawędź 0;
-    //2 to wchodzi krawędź 0;
     for (int e: vertices.back().edgesIdTo  ) allEdges[e].idVertexFrom = id;
+    
     std::swap(vertices[id],vertices.back());
     vertices[id].id = id;
     vertices.pop_back();

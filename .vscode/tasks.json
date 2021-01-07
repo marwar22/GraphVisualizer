@@ -9,11 +9,12 @@
 				"-g",
 				"src/*.cpp",
 				"src/graphics/*.cpp",
+				"src/algorithms/*.cpp",
 				"-o",
 				"ProjektProgram",
 				"-lsfml-graphics",
 				"-lsfml-window",
-				"-lsfml-system",
+				"-lsfml-system",			
 				"-std=c++17"
 			],
 			"options": {

@@ -6,16 +6,35 @@
 #include "app.hpp"
 #include "graph.hpp"
 #include "graphics/button.hpp"
-#include "utils.cpp"
+#include "utils.hpp"
 
 void Application::HandleMouseButtonPressed(sf::Event &event) {
-    for (Button &button : buttons) {
-        if (button.rectangle.getGlobalBounds().contains(event.mouseButton.x,event.mouseButton.y) ) {//czy myszka jest w prostokacie przycisku
-            button.OnClick(*this,button,event);      
-            holdingVertexId = -1;
-            firstVertexId = -1;    
-            secondVertexId = -1;                
-        }
+    switch( aktualnyStan )
+    {
+        case algorithmC:
+            for (Button &button : buttonsAlg) {
+                if (button.rectangle.getGlobalBounds().contains(event.mouseButton.x,event.mouseButton.y) ) {//czy myszka jest w prostokacie przycisku
+                    button.OnClick(*this,button,event);           
+                }
+            }
+            break;
+        case algorithmR:
+            for (Button &button : buttonsAlgR) {
+                if (button.rectangle.getGlobalBounds().contains(event.mouseButton.x,event.mouseButton.y) ) {//czy myszka jest w prostokacie przycisku
+                    button.OnClick(*this,button,event);           
+                }
+            }
+            break;
+        default:
+            for (Button &button : buttons) {
+                if (button.rectangle.getGlobalBounds().contains(event.mouseButton.x,event.mouseButton.y) ) {//czy myszka jest w prostokacie przycisku
+                    button.OnClick(*this,button,event);      
+                    holdingVertexId = -1;
+                    firstVertexId = -1;    
+                    secondVertexId = -1;                
+                }
+            }
+            break;
     }
     switch( aktualnyStan )
     {
@@ -114,6 +133,9 @@ void Application::HandleMouseButtonPressed(sf::Event &event) {
             }
             break;
     }
+
+    std::cerr<<"\n\n\nlog po wykonaniu Pressed:"<<std::endl;
+    PrintGraphLog(G);
 }
 void Application::HandleMouseButtonReleased(sf::Event &event) {
     
