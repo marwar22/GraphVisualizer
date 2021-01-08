@@ -13,11 +13,12 @@ enum stan {
         addV, removeV, 
         addE, removeE, 
         movingV,
-        simulateForce,
         algorithmC,
         algorithmR,
         readFile,
         saveFile,
+        chooseVertex,
+        nothing
 };
 
 class Application{
@@ -39,11 +40,20 @@ public:
     std::vector<Button> buttons;
     std::vector<Button> buttonsAlg;
     std::vector<Button> buttonsAlgR;
+    std::vector<Button> buttonsChooseVertex;
+    std::vector<int> chosenVertices;
     stan aktualnyStan;//wszystkie stany
     int holdingVertexId;
     int firstVertexId, secondVertexId;
+    int algorithmId;
+    bool simulateForces;
 
-    std::vector<std::function<void(Graph *,StepList*)> > algorithms;
+    bool runningForward;
+    bool runningBack;
+    long double lastStep;
+    long double timeStep;
+
+    std::vector<std::function<void(Graph *,StepList*, std::vector<int> &)> > algorithms;
     void Run();
     void CheckPodswietlenie(sf::Vector2i);
     void Render();

@@ -9,7 +9,7 @@
 #include "../steps.hpp"
 #include "../utils.hpp"
 
-void dfs(Graph &G, StepList* DFSStepList, int v) {
+void dfs_reku(Graph &G, StepList* DFSStepList, int v) {
     G.vertices[v].data1   = 1;
     G.vertices[v].subText.setString("vis");
     G.vertices[v].color = sf::Color::Yellow;
@@ -26,18 +26,18 @@ void dfs(Graph &G, StepList* DFSStepList, int v) {
     if(G.isDirected == 0) 
         for(auto id: G.vertices[v].edgesIdFrom) 
             if(G.vertices[G.allEdges[id].idVertexFrom].data1 == 0) 
-                dfs(G, DFSStepList, G.allEdges[id].idVertexFrom);
+                dfs_reku(G, DFSStepList, G.allEdges[id].idVertexFrom);
             
 
     for(auto id: G.vertices[v].edgesIdTo) 
         if(G.vertices[G.allEdges[id].idVertexTo].data1 == 0) 
-            dfs(G, DFSStepList, G.allEdges[id].idVertexTo);
+            dfs_reku(G, DFSStepList, G.allEdges[id].idVertexTo);
     
     //G->vertices[v].data1   = 1;
     //G->vertices[v].subText = "Prerobiony";
 }
 
-void DFS(Graph *G,StepList *StepListPtr) {
+void DFS(Graph *G,StepList *StepListPtr, std::vector<int>  &chosenV) {  
     //ZEROWANIE
     //Graph
     Graph GKopia(G);
@@ -54,7 +54,7 @@ void DFS(Graph *G,StepList *StepListPtr) {
     StepListPtr->InitState(initStep);
     //StepList DFSStepList(&GKopia);
     //*DFSStepList = StepList(G);
-    dfs(GKopia, StepListPtr,0);
+    dfs_reku(GKopia, StepListPtr,chosenV[0]);
     //return DFSStepList;
 }
 

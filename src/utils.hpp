@@ -13,6 +13,10 @@ const int GRAPH_AREA_HEIGHT  = 980;
 const int GRAPH_AREA_BORDER  = 20;
 const int TOOLBAR_HEIGHT     = 100;
 const int BUTTON_SPACING     = 20;
+
+const float ARR_W = 5.5;
+const float ARR_H = 15.f;
+
 void PrintGraphLog(Graph &G);
 
 #endif

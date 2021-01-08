@@ -30,7 +30,7 @@ public:
 	void RemoveEdge(int);
     void RemoveVertex(int);
 
-	void Draw(sf::RenderTarget&);
+	void Draw(sf::RenderTarget&,bool editLook);
     Graph( sf::Font *);
     Graph();
     Graph(Graph*);

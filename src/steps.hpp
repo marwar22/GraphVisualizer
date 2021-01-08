@@ -12,7 +12,7 @@ struct VertexChange {
     sf::Color color;
     VertexChange();
     VertexChange(int, int, int, sf::Color);
-    VertexChange(Vertex &);
+    VertexChange(const Vertex &);
 };
 struct EdgeChange{
     int id;
@@ -20,7 +20,7 @@ struct EdgeChange{
     sf::Color color;
     EdgeChange();
     EdgeChange(int, int, int, sf::Color);
-    EdgeChange(Edge &);
+    EdgeChange(const Edge &);
 };
 
 struct Step{    
@@ -42,7 +42,7 @@ public:
     void GoRight(); 
     void GoLeft();
     void ClearStates();
-    StepList(Graph*);
+    StepList(Graph * const);
     StepList();
     StepList &operator =(const StepList &__stepList);
 

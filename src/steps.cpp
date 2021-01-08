@@ -11,7 +11,7 @@ VertexChange::VertexChange(int __id, int __data1, int __data2, sf::Color __color
     color = __color;
 };
 
-VertexChange::VertexChange(Vertex &v){
+VertexChange::VertexChange(const Vertex &v){
     id = v.id;
     data1 = v.data1;
     data2 = v.data2;
@@ -28,7 +28,7 @@ EdgeChange::EdgeChange(int __id, int __weight1, int __weight2, sf::Color __color
     color = __color;
 };
 
-EdgeChange::EdgeChange(Edge &e){
+EdgeChange::EdgeChange(const Edge &e){
     id = e.id;
     weight1 = e.weight1;
     weight2 = e.weight2;
@@ -52,7 +52,7 @@ StepList& StepList::operator=(const StepList &__stepList)
     return *this;  
 } 
 
-StepList::StepList(Graph *ptr) {
+StepList::StepList(Graph * const ptr) {
     currentStep = -1;
     maxStepEver = 0;
     G = ptr;    

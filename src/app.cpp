@@ -5,6 +5,7 @@
 #include <iostream>
 #include <string>
 #include <random>
+#include <ctime>
 #include "graph.hpp"
 #include "app.hpp"
 #include "utils.hpp"
@@ -14,7 +15,7 @@
 #include <cassert>
 #define assertm(exp, msg) assert(((void)msg, exp))
 
-bool zeroV = true;
+
 void *sG;
 //assert(zeroV || G->vertices.size() > 0);
 
@@ -25,30 +26,78 @@ void Test(Application &app,Button &thisButton,sf::Event &event) {
     std::cout<<"test\n"<<std::endl;
     return;
 }
-
+void ChooseVertexInit(Application &app)
+{
+    app.aktualnyStan = chooseVertex;
+    app.chosenVertices.clear();
+}
 void ButtonRemoveVertex(Application &app,Button &thisButton,sf::Event &event) {app.aktualnyStan = removeV;}
 void ButtonAddVertex(Application    &app,Button &thisButton,sf::Event &event) {app.aktualnyStan = addV;}
 void ButtonRemoveEdge(Application   &app,Button &thisButton,sf::Event &event) {app.aktualnyStan = removeE;}
 void ButtonAddEdge(Application      &app,Button &thisButton,sf::Event &event) {app.aktualnyStan = addE;}
 void ButtonMoveVertex(Application   &app,Button &thisButton,sf::Event &event) {app.aktualnyStan = movingV;}
-void ButtonSimulate(Application     &app,Button &thisButton,sf::Event &event) {app.aktualnyStan = simulateForce;}
-void ButtonAlgorithm(Application    &app,Button &thisButton,sf::Event &event) {app.aktualnyStan = algorithmC;}
+void ButtonSimulate(Application     &app,Button &thisButton,sf::Event &event) {app.simulateForces = !app.simulateForces;}
+void ButtonAlgorithm(Application    &app,Button &thisButton,sf::Event &event) {
+    app.simulateForces = false;
+    app.runningForward = false;
+    app.aktualnyStan = algorithmC;}
+void PlayAlgorithm(Application    &app,Button &thisButton,sf::Event &event) {
+    app.runningForward = true;
+    app.runningBack = false;
+    app.lastStep= clock();
+    app.lastStep /= CLOCKS_PER_SEC;}
+void PlayBackAlgorithm(Application    &app,Button &thisButton,sf::Event &event) {
+    app.runningBack = true;
+    app.runningForward = false;
+    app.lastStep= clock();
+    app.lastStep /= CLOCKS_PER_SEC;}
+void StopPlayingAlgorithm(Application    &app,Button &thisButton,sf::Event &event) {
+    app.runningForward = false;
+    app.runningBack = false;}
 void ButtonReadFile(Application     &app,Button &thisButton,sf::Event &event) {app.aktualnyStan = readFile;}
 void ButtonSaveFile(Application     &app,Button &thisButton,sf::Event &event) {app.aktualnyStan = saveFile;}
-void ButtonReturn(Application       &app,Button &thisButton,sf::Event &event) {
-    app.aktualnyStan = simulateForce;
+void ButtonReturnToGraphEdit(Application       &app,Button &thisButton,sf::Event &event) {
+    app.aktualnyStan = nothing;
     app.holdingVertexId = -1;
     app.firstVertexId = -1;    
     app.secondVertexId = -1;}
-void ButtonReturnRun(Application    &app,Button &thisButton,sf::Event &event) {app.aktualnyStan = algorithmC;}
+void ButtonReturnToAlgChoose(Application    &app,Button &thisButton,sf::Event &event) {
+    app.runningForward = false;
+    app.runningBack = false;
+    app.aktualnyStan = algorithmC;
+    for (Vertex &v: app.G.vertices)
+        v.color = sf::Color::Red;
+    for (Edge &e: app.G.allEdges)
+        e.color = sf::Color::Black;
+    }
 void ButtonStepRight(Application    &app,Button &thisButton,sf::Event &event) {
     app.stepLista.GoRight();}
 void ButtonStepLeft(Application     &app,Button &thisButton,sf::Event &event) {
     app.stepLista.GoLeft();}
-void ButtonRunAlgorithm(Application &app,Button &thisButton,sf::Event &event) {
+void ButtonRunDFS(Application       &app,Button &thisButton,sf::Event &event) {
     app.stepLista.ClearStates();
-    app.algorithms[0](&(app.G),&app.stepLista);
-    app.aktualnyStan = algorithmR;}
+    ChooseVertexInit(app);
+    app.algorithmId = 0;
+    app.stepLista.GoRight();
+    //app.algorithms[0](&(app.G),&app.stepLista);
+    //app.aktualnyStan = algorithmR;
+}
+void ButtonRunBFS(Application       &app,Button &thisButton,sf::Event &event) {
+    app.stepLista.ClearStates();
+    ChooseVertexInit(app);
+    app.algorithmId = 1;
+    app.stepLista.GoRight();
+    //app.algorithms[1](&(app.G),&app.stepLista);
+    //app.aktualnyStan = algorithmR;
+}
+void ButtonRunColors(Application    &app,Button &thisButton,sf::Event &event) {
+    app.stepLista.ClearStates();
+    ChooseVertexInit(app);
+    app.algorithmId = 2;
+    app.stepLista.GoRight();
+    //app.algorithms[2](&(app.G),&app.stepLista);
+    //app.aktualnyStan = algorithmR;
+}
 void SetTextToMousePosition(Application &app,Button &thisButton,sf::Event &event) {   
     thisButton.text.setString(std::to_string(event.mouseButton.x) + "x "+ std::to_string(event.mouseButton.y)+ "y");}
 
@@ -62,30 +111,45 @@ Application::Application()
     sG = &G;
     aktualnyStan    = addV;
     holdingVertexId = -1;
+    simulateForces = false;
     sf::ContextSettings settings;
     settings.antialiasingLevel = 0;
     
-    
-    algorithms.push_back(DFS);
-    algorithms.push_back(ColorsAlgorithm);
+    runningForward = false;
+    runningBack = false;
+    timeStep = 0.01; //czas
+    lastStep = 0;
 
-    buttons.push_back(Button(50,24,195,45,"Dodaj wierzcholek",  &font,ButtonAddVertex));
-    buttons.push_back(Button(250,24,195,45,"Usun wierzcholek",  &font,ButtonRemoveVertex));
-    buttons.push_back(Button(450,24,145,45,"Dodaj krawedz",     &font,ButtonAddEdge));
-    buttons.push_back(Button(800,24,145,45,"Usun krawedz",      &font,ButtonRemoveEdge));
-    buttons.push_back(Button(900,24,145,45,"Symulacja sil",     &font,ButtonSimulate));
-    buttons.push_back(Button(1050,24,145,45,"Odczyt z pliku",   &font,ButtonReadFile));
-    buttons.push_back(Button(1200,24,145,45,"Zapis do pliku",   &font,ButtonSaveFile));
+    buttons.push_back(Button(50,24,195,45,"Dodaj wierzcholek",   &font,ButtonAddVertex));
+    buttons.push_back(Button(250,24,195,45,"Usun wierzcholek",   &font,ButtonRemoveVertex));
+    buttons.push_back(Button(450,24,145,45,"Dodaj krawedz",      &font,ButtonAddEdge));
+    buttons.push_back(Button(800,24,145,45,"Usun krawedz",       &font,ButtonRemoveEdge));
+    buttons.push_back(Button(900,24,145,45,"Symulacja sil",      &font,ButtonSimulate));
+    buttons.push_back(Button(1050,24,145,45,"Odczyt z pliku",    &font,ButtonReadFile));
+    buttons.push_back(Button(1200,24,145,45,"Zapis do pliku",    &font,ButtonSaveFile));
 
-    buttons.push_back(Button(1350,24,150,45,"Koordy",           &font,SetTextToMousePosition));
+    buttons.push_back(Button(1350,24,150,45,"Koordy",            &font,SetTextToMousePosition));
     buttons.push_back(Button(1350,24,150,45,"Przesun\nwierzcholek",&font,ButtonMoveVertex));
-    buttons.push_back(Button(1350,24,150,45,"Algorytm",&font,ButtonAlgorithm));
+    buttons.push_back(Button(1350,24,150,45,"Wybierz\nAlgorytm", &font,ButtonAlgorithm));
 
-    buttonsAlg.push_back(Button(50,24,150,45,"Run Algorytm",   &font,ButtonRunAlgorithm));
-    buttonsAlg.push_back(Button(190,24,150,45,"Powrot",        &font,ButtonReturn));
-    buttonsAlgR.push_back(Button(50,24,50,45,"->",             &font,ButtonStepRight));
-    buttonsAlgR.push_back(Button(120,24,50,45,"<-",            &font,ButtonStepLeft));
-    buttonsAlgR.push_back(Button(190,24,150,45,"Powrot",       &font,ButtonReturnRun));
+    algorithms.push_back(DFS);   
+    algorithms.push_back(BFS);   
+    buttonsAlg.push_back(Button(50,24,50,45,"DFS",     &font,ButtonRunDFS));
+    buttonsAlg.push_back(Button(50,24,50,45,"BFS",     &font,ButtonRunBFS));
+    
+    algorithms.push_back(ColorsAlgorithm);
+    buttonsAlg.push_back(Button(190,24,80,45,"Kolory",          &font,ButtonRunColors));
+    buttonsAlg.push_back(Button(190,24,150,45,"Powrot",          &font,ButtonReturnToGraphEdit));
+    
+
+
+    buttonsAlgR.push_back(Button(50,24,50,45,"<",                &font,PlayBackAlgorithm));
+    buttonsAlgR.push_back(Button(50,24,50,45,"||",               &font,StopPlayingAlgorithm));
+    buttonsAlgR.push_back(Button(50,24,50,45,">",                &font,PlayAlgorithm));
+    buttonsAlgR.push_back(Button(50,24,50,45,"->",               &font,ButtonStepRight));
+    buttonsAlgR.push_back(Button(120,24,50,45,"<-",              &font,ButtonStepLeft));
+    buttonsAlgR.push_back(Button(190,24,150,45,"Powrot",         &font,ButtonReturnToAlgChoose));
+    buttonsChooseVertex.push_back(Button(190,24,150,45,"Powrot", &font,ButtonReturnToAlgChoose));
 
     for (int i = 1; i< buttons.size();++i) {
         buttons[i].x = buttons[i-1].x + buttons[i-1].width + BUTTON_SPACING;
@@ -128,6 +192,14 @@ void Application::CheckPodswietlenie(sf::Vector2i mousePosition) {
             button.SetColor(sf::Color::Black);
         }
     }
+    for (Button &button : buttonsChooseVertex) {
+        if (button.rectangle.getGlobalBounds().contains(mousePosition.x,mousePosition.y) ) {//czy myszka jest w prostokacie przycisku
+            button.SetColor(sf::Color::Blue);
+        }
+        else {
+            button.SetColor(sf::Color::Black);
+        }
+    }
 
 }
 
@@ -147,13 +219,33 @@ void Application::Run() {
         sf::Vector2i mousePosition = sf::Mouse::getPosition(window);
         //stepLista.currentStep                
         //std::cerr<<"steplista: "<<stepLista.G->vertices.size()<<" <-> "<< stepLista.G <<"\n";
-        std::cerr<<(stepLista.G == sG);
+        //std::cerr<<(stepLista.G == sG);
         //assert((zeroV) || (    (stepLista.G->vertices[0].id >= 0 && stepLista.G->vertices[0].id <= 2) && stepLista.currentStep >= -1   ));
         
-        if(aktualnyStan == simulateForce)
+        if(simulateForces)
         {
             G.CalculateForces(window.getSize().x,window.getSize().y-TOOLBAR_HEIGHT);//to wtedy i tlyko wtedy gdy aktualny stan na symulacje sily
             G.ApplyForces(window.getSize().x,window.getSize().y-TOOLBAR_HEIGHT);
+        } else {
+            for (Vertex &v: G.vertices) {
+                v.KeepInGraphArea(window.getSize().x,window.getSize().y-TOOLBAR_HEIGHT);
+            }
+        }
+        if( runningForward && aktualnyStan == algorithmR ){
+            long double tt= clock();
+            tt /= CLOCKS_PER_SEC;
+            if( tt >= lastStep + timeStep ){
+                lastStep = tt;
+                stepLista.GoRight();
+            }
+        }
+        if( runningBack && aktualnyStan == algorithmR ){
+            long double tt= clock();
+            tt /= CLOCKS_PER_SEC;
+            if( tt >= lastStep + timeStep ){
+                lastStep = tt;
+                stepLista.GoLeft();
+            }
         }
         CheckPodswietlenie(mousePosition);
         Render();
@@ -180,7 +272,7 @@ void Application::RenderGraphArea(){
     GraphArea.create(window.getSize().x,window.getSize().y-TOOLBAR_HEIGHT,settings);
     GraphArea.clear(sf::Color::Blue);
 
-    G.Draw(GraphArea);
+    G.Draw(GraphArea,aktualnyStan != algorithmR);
      
     GraphArea.display();
     sf::Sprite GraphAreaSprite;
@@ -210,6 +302,11 @@ void Application::RenderToolBar() {
         case algorithmR:
             for (int i=0; i<buttonsAlgR.size(); ++i) {
                 buttonsAlgR[i].draw(toolBar);
+            }
+            break;
+        case chooseVertex:
+            for (int i=0; i<buttonsChooseVertex.size(); ++i) {
+                buttonsChooseVertex[i].draw(toolBar);
             }
             break;
         default:

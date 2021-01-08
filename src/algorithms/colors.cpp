@@ -9,7 +9,7 @@
 #include "../steps.hpp"
 #include "../utils.hpp"
 
-void ColorsAlgorithm(Graph *G,StepList *StepListPtr) {
+void ColorsAlgorithm(Graph *G,StepList *StepListPtr, std::vector<int> &chosenV) {  
     //StepList colorStepList = StepList(G);
 
     std::vector<VertexChange> firstVerticesChanges;

@@ -27,7 +27,7 @@ public:
 	sf::Vector2f force;
     sf::Color color;
 
-	bool isBeingMoved;
+	bool isBeingChosen;
 
     void SetColor(sf::Color);
 

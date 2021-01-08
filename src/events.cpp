@@ -8,7 +8,6 @@
 #include "graphics/button.hpp"
 #include "utils.hpp"
 
-extern int zeroV;
 extern void *sG;
 void Application::HandleMouseButtonPressed(sf::Event &event) {
     switch( aktualnyStan )
@@ -22,6 +21,13 @@ void Application::HandleMouseButtonPressed(sf::Event &event) {
             break;
         case algorithmR:
             for (Button &button : buttonsAlgR) {
+                if (button.rectangle.getGlobalBounds().contains(event.mouseButton.x,event.mouseButton.y) ) {//czy myszka jest w prostokacie przycisku
+                    button.OnClick(*this,button,event);           
+                }
+            }
+            break;
+        case chooseVertex:
+            for (Button &button : buttonsChooseVertex) {
                 if (button.rectangle.getGlobalBounds().contains(event.mouseButton.x,event.mouseButton.y) ) {//czy myszka jest w prostokacie przycisku
                     button.OnClick(*this,button,event);           
                 }
@@ -45,9 +51,9 @@ void Application::HandleMouseButtonPressed(sf::Event &event) {
                 int dx = v.position.x - event.mouseButton.x;
                 int dy = v.position.y - (event.mouseButton.y - TOOLBAR_HEIGHT);
                 if (sqrt(dx*dx+dy*dy) <= V_RADIUS) {
-                    v.SetColor(sf::Color::Yellow);
+                    //v.SetColor(sf::Color::Yellow);
                     holdingVertexId = v.id;
-                    v.isBeingMoved = true;
+                    v.isBeingChosen = true;
                     break;
                 }
             }
@@ -69,8 +75,19 @@ void Application::HandleMouseButtonPressed(sf::Event &event) {
                 sf::Vector2f cords;
                 cords.x = event.mouseButton.x;
                 cords.y = event.mouseButton.y - TOOLBAR_HEIGHT;
-                zeroV = false;
                 G.AddVertex( cords );
+            }
+            break;
+        case chooseVertex:
+            for (Vertex &v: G.vertices) {            
+                int dx = v.position.x - event.mouseButton.x;
+                int dy = v.position.y - (event.mouseButton.y - TOOLBAR_HEIGHT);
+                if (sqrt(dx*dx+dy*dy) <= V_RADIUS) {
+                    chosenVertices.push_back( v.id );
+                    aktualnyStan = algorithmR;
+                    algorithms[algorithmId](&G,&stepLista,chosenVertices);
+                    break;
+                }
             }
             break;
         case addE:
@@ -80,10 +97,9 @@ void Application::HandleMouseButtonPressed(sf::Event &event) {
                 if (sqrt(dx*dx+dy*dy) <= V_RADIUS) {
                     if( firstVertexId == -1 ) {
                         firstVertexId = v.id;
-                        v.SetColor(sf::Color::Yellow);
+                        v.isBeingChosen = true;
                     }else if( secondVertexId == -1 && firstVertexId != v.id ) {
                         secondVertexId = v.id;
-                        v.SetColor(sf::Color::Yellow);
                         if( !G.isWeighted ) {
                             if( G.allEdges.empty() )
                                 G.AddEdge( firstVertexId, secondVertexId, 0, 0 );
@@ -95,8 +111,7 @@ void Application::HandleMouseButtonPressed(sf::Event &event) {
                                 if( e.id == G.allEdges.size() - 1 )
                                     G.AddEdge( firstVertexId, secondVertexId, 0, 0 );
                             }
-                            G.vertices [ firstVertexId ].SetColor( sf::Color::Red );
-                            G.vertices [ secondVertexId ].SetColor( sf::Color::Red );
+                            G.vertices [ firstVertexId ].isBeingChosen = false;
                             firstVertexId = -1;
                             secondVertexId = -1;
                         }
@@ -112,10 +127,9 @@ void Application::HandleMouseButtonPressed(sf::Event &event) {
                 if (sqrt(dx*dx+dy*dy) <= V_RADIUS) {
                     if( firstVertexId == -1 ) {
                         firstVertexId = v.id;
-                        v.SetColor(sf::Color::Yellow);
+                        v.isBeingChosen = true;
                     }else if( secondVertexId == -1 && firstVertexId != v.id ) {
                         secondVertexId = v.id;
-                        v.SetColor(sf::Color::Yellow);
                         for(Edge &e: G.allEdges ) {
                             if( e.idVertexFrom == firstVertexId && e.idVertexTo == secondVertexId ) {
                                 G.RemoveEdge( e.id );
@@ -126,8 +140,8 @@ void Application::HandleMouseButtonPressed(sf::Event &event) {
                                 break;
                             }
                         }
-                        G.vertices [ firstVertexId ].SetColor( sf::Color::Red );
-                        G.vertices [ secondVertexId ].SetColor( sf::Color::Red );
+                        G.vertices [ firstVertexId ].isBeingChosen = false;
+                        
                         firstVertexId = -1;
                         secondVertexId = -1;
                     }
@@ -146,8 +160,8 @@ void Application::HandleMouseButtonReleased(sf::Event &event) {
     {
         case movingV:      
             if (holdingVertexId != -1) {        
-                G.vertices[holdingVertexId].SetColor(sf::Color::Red);
-                G.vertices[holdingVertexId].isBeingMoved = false;
+                //G.vertices[holdingVertexId].SetColor(sf::Color::Red);
+                G.vertices[holdingVertexId].isBeingChosen = false;
                 holdingVertexId = -1;
             }
             break;

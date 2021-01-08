@@ -23,7 +23,7 @@ Vertex::Vertex(sf::Vector2f __position, int __id, sf::Font& font){
     subText.setCharacterSize(20);
     force = sf::Vector2f(0.f,0.f);
     color = sf::Color::Red;
-    isBeingMoved = false;
+    isBeingChosen = false;
 }
 
 void Vertex::SetColor(sf::Color temp_color){
