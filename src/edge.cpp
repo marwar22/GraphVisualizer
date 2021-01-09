@@ -36,7 +36,18 @@ void Edge::SetColor(sf::Color temp_color){
 
 void Graph::AddEdge(int v,int w, int weight1=0, int weight2=0) {
 	Edge edge = Edge(v, w, weight1, weight2,font);
-	
+	edge.midEdgePosition.x = (vertices[v].position.x + vertices[w].position.x)/2;
+	edge.midEdgePosition.y = (vertices[v].position.y + vertices[w].position.y)/2;
+	edge.id = allEdges.size();
+    vertices[edge.idVertexFrom].edgesIdTo.push_back(edge.id);
+    vertices[edge.idVertexTo].edgesIdFrom.push_back(edge.id);
+    allEdges.push_back(edge);
+}
+
+void Graph::AddEdge(int v,int w, int weight1=0, int weight2=0,int midEPosX=0,int midEPosY=0) {
+	Edge edge = Edge(v, w, weight1, weight2,font);
+	edge.midEdgePosition.x = midEPosX;
+	edge.midEdgePosition.y = midEPosY;
 	edge.id = allEdges.size();
     vertices[edge.idVertexFrom].edgesIdTo.push_back(edge.id);
     vertices[edge.idVertexTo].edgesIdFrom.push_back(edge.id);

@@ -18,12 +18,15 @@ public:
 
 	float CenterGravityForce(float);
 	float VertexRepulsionForce(float);
-	float EdgeAttractionForce(float);//w argumentach indeksy wierzcholkow
+	float EdgeAttractionForce(float);
+    float MidEdgeRepulsionForce(float);
+	float MidEdgeAttractionForce(float);
 
 	void CalculateForces(const int width,const int height);
 	void ApplyForces(const int width,const int height);
 
     void AddEdge(int,int,int,int);
+    void AddEdge(int,int,int,int,int,int);
     void ChangeAll(int,int);
     void AddVertex(sf::Vector2f);
     void RemoveEdgeFromVertex(int,int);
