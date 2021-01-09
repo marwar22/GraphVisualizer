@@ -7,11 +7,12 @@
 #include <vector>
 #include "graph.hpp"
 #include "graphics/button.hpp"
+#include "graphics/textbox.hpp"
 #include "steps.hpp"
 
 enum stan {
         addV, removeV, 
-        addE, removeE, 
+        addE, editE, removeE, 
         movingV,
         algorithmC,
         algorithmR,
@@ -41,12 +42,17 @@ public:
     std::vector<Button> buttonsAlg;
     std::vector<Button> buttonsAlgR;
     std::vector<Button> buttonsChooseVertex;
+
+    std::vector<TextBox> textBoxAlgR;
+
     std::vector<int> chosenVertices;
     stan aktualnyStan;//wszystkie stany
     int holdingVertexId;
     int firstVertexId, secondVertexId;
+    int selectedEdgeId;
     int algorithmId;
     bool simulateForces;
+    std::string textEntered;
 
     bool runningForward;
     bool runningBack;
@@ -59,12 +65,14 @@ public:
     void Render();
     void RenderToolBar();
     void RenderGraphArea();
+    void ClearSelected();
     Application();
-
+    char getCharFromInput(sf::Event &event);
     void HandleEvent(sf::Event &event);
     void HandleMouseButtonPressed(sf::Event &event);
     void HandleMouseButtonReleased(sf::Event &event);
     void HandleMouseMoved(sf::Event &event);
+    void HandleTextEntered(sf::Event &event);
 };
 
 

@@ -5,7 +5,7 @@
 #include <SFML/Window.hpp>
 #include <SFML/System.hpp>
 #include <vector>
-
+#include <string>
 class Edge{
 public:
     int id, idVertexFrom, idVertexTo;

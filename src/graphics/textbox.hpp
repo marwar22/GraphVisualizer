@@ -1,5 +1,5 @@
-#ifndef BUTTON_HPP
-#define BUTTON_HPP
+#ifndef TEXTBOX_HPP
+#define TEXTBOX_HPP
 
 #include <SFML/Graphics.hpp>
 #include <SFML/Window.hpp>
@@ -9,22 +9,18 @@
 #include <string>
 
 class Application;
-class Button{
+class TextBox{
 public:
     sf::RectangleShape rectangle;
     sf::Text text;
-    std::function<void(Application &app,Button&,sf::Event&)> OnClick;
     int x, y;
     int width, height;
     void draw(sf::RenderTarget&);
     void SetColor(sf::Color);
     
-    Button(int, int, int, int, std::string,sf::Font *,
-           std::function<void(Application &app,Button&,sf::Event&)>);
-    Button(int, int, int, int, sf::Text,sf::Font *,
-           std::function<void(Application &app,Button&,sf::Event&)>);
+    TextBox(int, int, int, int, std::string,sf::Font *);
 
-    Button();
+    TextBox();
     void SetPosition();
     void Relocate();
 };

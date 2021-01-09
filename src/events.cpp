@@ -3,10 +3,12 @@
 #include <SFML/System.hpp>
 #include <iostream>
 #include <random>
+#include <climits>
 #include "app.hpp"
 #include "graph.hpp"
 #include "graphics/button.hpp"
 #include "utils.hpp"
+#include "filehandle.hpp"
 
 extern void *sG;
 void Application::HandleMouseButtonPressed(sf::Event &event) {
@@ -14,7 +16,7 @@ void Application::HandleMouseButtonPressed(sf::Event &event) {
     {
         case algorithmC:
             for (Button &button : buttonsAlg) {
-                if (button.rectangle.getGlobalBounds().contains(event.mouseButton.x,event.mouseButton.y) ) {//czy myszka jest w prostokacie przycisku
+                if (button.rectangle.getGlobalBounds().contains(event.mouseButton.x,event.mouseButton.y) ) {//czy myszka jest w prostokacie przycisku                    
                     button.OnClick(*this,button,event);           
                 }
             }
@@ -36,14 +38,14 @@ void Application::HandleMouseButtonPressed(sf::Event &event) {
         default:
             for (Button &button : buttons) {
                 if (button.rectangle.getGlobalBounds().contains(event.mouseButton.x,event.mouseButton.y) ) {//czy myszka jest w prostokacie przycisku
-                    button.OnClick(*this,button,event);      
+                    button.OnClick(*this,button,event);
+                    ClearSelected();      
                     holdingVertexId = -1;
-                    firstVertexId = -1;    
-                    secondVertexId = -1;                
                 }
             }
             break;
     }
+
     switch( aktualnyStan )
     {
         case movingV:       
@@ -120,6 +122,39 @@ void Application::HandleMouseButtonPressed(sf::Event &event) {
                 }
             }
             break;
+        
+        case editE:
+        {
+            if (selectedEdgeId == -1){ /// jeszcze nie wybrano 2 krawędzi
+                for (Vertex &v: G.vertices) {
+                    int dx = v.position.x - event.mouseButton.x;
+                    int dy = v.position.y - (event.mouseButton.y - TOOLBAR_HEIGHT);
+                    if (sqrt(dx*dx+dy*dy) <= V_RADIUS) {
+                        if( firstVertexId == -1 ) {
+                            firstVertexId = v.id;
+                            v.isBeingChosen = true;
+                        }else if( secondVertexId == -1 && firstVertexId != v.id ) {
+
+                            // jeżeli istnieje krawędź między firstVertexId a secondVertexId, czekaj na wpr wagi
+                            secondVertexId = v.id;
+                            for(Edge &e: G.allEdges ) {
+                                if( (e.idVertexFrom == firstVertexId && e.idVertexTo == secondVertexId) 
+                                    || ( e.idVertexFrom == secondVertexId && e.idVertexTo == firstVertexId )){
+                                        v.isBeingChosen = true;
+                                        selectedEdgeId = e.id; 
+                                        e.weight1=1;}
+                            }
+                            if (selectedEdgeId == -1)
+                                secondVertexId = -1;
+                        }
+                    }
+                }
+            }
+                /// część po wybraniu 2 wierzchołków w innej części programu            
+        }
+        break; //???
+            
+
         case removeE:
             for (Vertex &v: G.vertices) {            
                 int dx = v.position.x - event.mouseButton.x;
@@ -154,6 +189,7 @@ void Application::HandleMouseButtonPressed(sf::Event &event) {
     std::cerr<<"\n\n\nlog po wykonaniu Pressed:"<<std::endl;
     PrintGraphLog(G);
 }
+
 void Application::HandleMouseButtonReleased(sf::Event &event) {
     
     switch( aktualnyStan )
@@ -178,6 +214,44 @@ void Application::HandleMouseMoved(sf::Event &event) {
             break;
     }
 }
+
+char Application::getCharFromInput(sf::Event &event){
+    return static_cast<char>(event.text.unicode);
+}
+
+void Application::HandleTextEntered(sf::Event &event) {
+    char letter = getCharFromInput(event);//SPRAWDZIC DZIALANIE ENTER'A NA WINDOWSIE, JEZELI CHCEMY WIDNOWSA TEZ
+    //std::cerr<<"zbieram znaki z wejscia "<<letter<<" "<<(int)letter<<"\n";
+    //if((int)letter == 13) std::cerr<<"jestem w enterze\n";    ENTER I BACKSPACE DZIALAJA
+    //if((int)letter == 8) std::cerr<<"BACKSPACE\n";
+    if(aktualnyStan == saveFile || aktualnyStan == readFile) {
+        if(letter == 8) textEntered.pop_back();
+        else if(letter == 13) {
+            if(aktualnyStan == saveFile)
+                WriteFile( textEntered.c_str(), &(G) );
+            if(aktualnyStan == readFile)
+                ReadFile( textEntered.c_str(), &(G) ); 
+        }
+        else textEntered.push_back(letter);
+    }
+
+    if (aktualnyStan == editE && selectedEdgeId != -1) {
+        if     ((int)letter == 45) {G.allEdges[selectedEdgeId].weight1 *= (-1);} // zmiana znaku
+        else if((int)letter == 13) {
+            selectedEdgeId = -1; 
+            G.vertices[firstVertexId].isBeingChosen = false;
+            G.vertices[secondVertexId].isBeingChosen = false;
+
+            firstVertexId = -1; 
+            secondVertexId = -1;
+        } //enter
+        else if((int)letter == 8) {G.allEdges[selectedEdgeId].weight1 /= 10;} //backspace
+        else if(G.allEdges[selectedEdgeId].weight1 <= (INT_MAX - 100) / 10){
+                G.allEdges[selectedEdgeId].weight1 = G.allEdges[selectedEdgeId].weight1 * 10 + (int(letter) - 48);
+        }
+    }
+}
+
 void Application::HandleEvent(sf::Event &event) {
     if (event.type == sf::Event::Closed)              window.close();        
     if (event.type == sf::Event::MouseButtonPressed)  HandleMouseButtonPressed(event);                
@@ -188,4 +262,5 @@ void Application::HandleEvent(sf::Event &event) {
         sf::FloatRect visibleArea(0, 0, event.size.width, event.size.height);
         window.setView(sf::View(visibleArea));
     }
+    if(event.type == sf::Event::TextEntered)          HandleTextEntered(event);       
 }

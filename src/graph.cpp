@@ -171,7 +171,7 @@ void Graph::Draw(sf::RenderTarget& window,bool editLook){
             window.draw(arrowLine2);
         }
 
-        edge.t1.setString(std::to_string(edge.id));//TA LINIJKA DO USUNIECIA
+        edge.t1.setString(std::to_string(edge.weight1));//TA LINIJKA DO USUNIECIA
         edge.t1.setPosition((vertices[edge.idVertexFrom].position.x + vertices[edge.idVertexTo].position.x)/2,(vertices[edge.idVertexFrom].position.y + vertices[edge.idVertexTo].position.y)/2);
         edge.t2.setPosition((vertices[edge.idVertexFrom].position.x + vertices[edge.idVertexTo].position.x)/2,(vertices[edge.idVertexFrom].position.y + vertices[edge.idVertexTo].position.y)/2+20);
         window.draw(edge.t1);
@@ -184,6 +184,8 @@ void Graph::Draw(sf::RenderTarget& window,bool editLook){
     
     for (Vertex v: vertices) {
         v.text1.setString(std::to_string(v.id));
+        v.subText.setString(std::to_string(v.data1));
+        v.subText2.setString(std::to_string(v.data2));
         shape.setPosition(sf::Vector2f(v.position.x, v.position.y));
         if (editLook) {
             v.color = sf::Color::Red;            
@@ -200,5 +202,11 @@ void Graph::Draw(sf::RenderTarget& window,bool editLook){
         else if(v.id < 100) v.text1.setPosition(sf::Vector2f(v.position.x + 3, v.position.y - 3));
         else v.text1.setPosition(sf::Vector2f(v.position.x + 6, v.position.y - 3));
         window.draw(v.text1);
+        v.subText.setPosition(sf::Vector2f(v.text1.getPosition().x, v.text1.getPosition().y + 20));
+        v.subText2.setPosition(sf::Vector2f(v.subText.getPosition().x, v.subText.getPosition().y + 20));
+        v.subText.setOrigin(sf::Vector2f(v.subText.getGlobalBounds().width/2,v.subText.getGlobalBounds().height/2));
+        v.subText2.setOrigin(sf::Vector2f(v.subText2.getGlobalBounds().width/2,v.subText2.getGlobalBounds().height/2));
+        window.draw(v.subText);
+        window.draw(v.subText2);
     }
 }

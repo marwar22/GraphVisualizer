@@ -9,7 +9,7 @@
 
 
 
-std::mt19937 rnd(1234);
+std::mt19937 rnd(12345);
 int los(int mi,int mx) {return rnd()%(mx-mi+1)+mi;}
 int main()
 {

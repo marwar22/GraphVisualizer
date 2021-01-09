@@ -21,6 +21,10 @@ Vertex::Vertex(sf::Vector2f __position, int __id, sf::Font& font){
     subText.setFont(font);
     subText.setOrigin(sf::Vector2f(subText.getGlobalBounds().width/2,subText.getGlobalBounds().height/2));
     subText.setCharacterSize(20);
+    subText2.setString("");
+    subText2.setFont(font);
+    subText2.setOrigin(sf::Vector2f(subText2.getGlobalBounds().width/2,subText2.getGlobalBounds().height/2));
+    subText2.setCharacterSize(20);
     force = sf::Vector2f(0.f,0.f);
     color = sf::Color::Red;
     isBeingChosen = false;
