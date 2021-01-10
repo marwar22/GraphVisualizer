@@ -4,11 +4,13 @@
 
 const float OPT_V_DST  = 200.f;
 const float OPT_E_DST  = 100.f;
-const float OPT_ME_DST = 20.f;
-const float OPT_MED_DST = 50.f;
+const float OPT_ME_V_DST = 30.f;
+const float OPT_ME_OME_DST = 50.f;
+const float OPT_ME_ME_DST = 30.f;
 
-const float V_RADIUS = 15.f;
-const float LINE_WIDTH = 3.f;
+const float V_RADIUS   = 15.f;
+const float EDGE_WIDTH = 3.f;
+const int EDGE_POINTS  = 10;  //dokładność rysowana krzywej
 
 const int GRAPH_AREA_WIDTH   = 1920;
 const int GRAPH_AREA_HEIGHT  = 980;

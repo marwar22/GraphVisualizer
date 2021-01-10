@@ -115,10 +115,16 @@ void ButtonRunDIJKSTRA(Application       &app,Button &thisButton,sf::Event &even
     app.algorithmId = 2;
     app.stepLista.GoRight();
 }
-void ButtonRunColors(Application    &app,Button &thisButton,sf::Event &event) {
+void ButtonRunSCC(Application       &app,Button &thisButton,sf::Event &event) {
     app.stepLista.ClearStates();
     ChooseVertexInit(app);
     app.algorithmId = 3;
+    app.stepLista.GoRight();
+}
+void ButtonRunColors(Application    &app,Button &thisButton,sf::Event &event) {
+    app.stepLista.ClearStates();
+    ChooseVertexInit(app);
+    app.algorithmId = 4;
     app.stepLista.GoRight();
 }
 //void SetTextToMousePosition(Application &app,Button &thisButton,sf::Event &event) {   
@@ -184,6 +190,8 @@ Application::Application()
     algorithms.push_back(DIJKSTRA);   
     buttonsAlg.push_back(Button(50,24,50,45,"Dijkstra", &font,ButtonRunDIJKSTRA));
 
+    algorithms.push_back(SCC);   
+    buttonsAlg.push_back(Button(50,24,50,45,"SCC", &font,ButtonRunSCC));
 
 
     algorithms.push_back(ColorsAlgorithm);
@@ -421,8 +429,8 @@ void Application::RenderToolBar() {
                 buttonsAlgR[i].draw(toolBar);
             }
             
-            stringStream << std::fixed << std::setprecision(3) << std::round(timeStep * 64);
-            stringStream.str();
+            stringStream << std::fixed << std::setprecision(3) << std::round(timeStep * 64000)/1000;
+            stringSpeed = stringStream.str();
             textBoxAlgR[0].text.setString(stringSpeed);
             for (TextBox &tb :textBoxAlgR) {
                 tb.draw(toolBar);

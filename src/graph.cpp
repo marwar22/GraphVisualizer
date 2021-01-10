@@ -45,11 +45,19 @@ Graph::Graph(Graph* g){
 
 
 Graph::Graph(){}
+void Graph::CalculateRepulsionForceMidEdges(MidEdge &me1, MidEdge &me2){
+    float distance   = getLength(me1.position,me2.position);
+    float forceValue = MidEdgeOtherMidEdgeRepulsionForce(distance);
+    float angle      = GetAngleByPoints(me1.position,me2.position);
 
+    sf::Vector2f forces(cos(angle) * forceValue, sin(angle) * forceValue);
+    me1.force += forces;
+    me2.force -= forces;
+}
 void Graph::CalculateForces(const int width,const int height) {
 
-    for (Vertex &v:vertices) v.force        = sf::Vector2f(0.f,0.f); //zerowanie sił wierzchołków
-    for (Edge   &e:allEdges) e.midEdgeForce = sf::Vector2f(0.f,0.f); //zerowanie sił krawędzi
+    for (Vertex &v:vertices) v.force = sf::Vector2f(0.f,0.f); //zerowanie sił wierzchołków
+    for (Edge   &e:allEdges) e.midEFrom.force = e.midETo.force = sf::Vector2f(0.f,0.f); //zerowanie sił mid krawędzi
 	//przyciaganie do srodka 
 	for (Vertex &v:vertices) {
 		float distance   = getLength(sf::Vector2f(width/2, height/2), v.position);
@@ -71,11 +79,11 @@ void Graph::CalculateForces(const int width,const int height) {
         }
 	}
 
-	//przyciaganie sie na krawedziach
+	
 	for (Edge &edge : allEdges) {
         int v = edge.idVertexFrom;
         int w = edge.idVertexTo;
-
+        //przyciaganie sie na krawedziach
 		float distance   = getLength(vertices[v].position, vertices[w].position);
 		float forceValue = EdgeAttractionForce(distance);
 		float angle      = GetAngleByCoordinates(vertices[v].position.x - vertices[w].position.x, vertices[v].position.y - vertices[w].position.y);
@@ -83,30 +91,41 @@ void Graph::CalculateForces(const int width,const int height) {
         sf::Vector2f forces(cos(angle) * forceValue, sin(angle) * forceValue);
         vertices[v].force += forces;
         vertices[w].force -= forces;
-    
-        distance   = getLength(vertices[v].position, edge.midEdgePosition);
-        forceValue = MidEdgeAttractionForce(distance);
-        angle      = GetAngleByPoints(vertices[v].position, edge.midEdgePosition);
+        //-----------------------------------------
+        //przyciąganie się wierzchołek - midkrawędź
+        float selfLoopMltp = 1;
+        if(v == w) selfLoopMltp = 100.f;
+        distance   = getLength(vertices[v].position, edge.midEFrom.position);
+        forceValue = MidEdgeVertexAttractionForce(distance,selfLoopMltp);
+        angle      = GetAngleByPoints(vertices[v].position, edge.midEFrom.position);
         forces = sf::Vector2f(cos(angle) * forceValue, sin(angle) * forceValue);
         //vertices[v].force += forces;
-        edge.midEdgePosition -= forces;
+        edge.midEFrom.force -= forces;
 
-        distance   = getLength(vertices[w].position, edge.midEdgePosition);
-        forceValue = MidEdgeAttractionForce(distance);
-        angle      = GetAngleByPoints(vertices[w].position, edge.midEdgePosition);
+        distance   = getLength(vertices[w].position, edge.midETo.position);
+        forceValue = MidEdgeVertexAttractionForce(distance,selfLoopMltp);
+        angle      = GetAngleByPoints(vertices[w].position, edge.midETo.position);
         forces = sf::Vector2f(cos(angle) * forceValue, sin(angle) * forceValue);
         //vertices[w].force += forces;
-        edge.midEdgePosition -= forces;
+        edge.midETo.force -= forces;
+        //----------------------------------------
+        //przyciąganie się midkrawędź - midkrawędź
+        distance   = getLength(edge.midEFrom.position, edge.midETo.position);
+        forceValue = MidEdges1EdgeAttractionForce(distance,selfLoopMltp);
+        angle      = GetAngleByPoints(edge.midEFrom.position, edge.midETo.position);
+        forces = sf::Vector2f(cos(angle) * forceValue, sin(angle) * forceValue);
+        edge.midEFrom.force += forces;
+        edge.midETo.force   -= forces;
     }
-    for (Edge &e1 : allEdges) {
-        for (Edge &e2 : allEdges) {
-            float distance   = getLength(e1.midEdgePosition,e2.midEdgePosition);
-		    float forceValue = MidEdgeRepulsionForce(distance);
-            float angle      = GetAngleByPoints(e1.midEdgePosition,e2.midEdgePosition);
 
-            sf::Vector2f forces(cos(angle) * forceValue, sin(angle) * forceValue);
-            e1.midEdgeForce += forces;
-            e2.midEdgeForce -= forces;
+
+
+    for (int i = 0; i < allEdges.size(); ++i) {
+        for (int j = i+1; j < allEdges.size(); ++j) {
+            CalculateRepulsionForceMidEdges(allEdges[i].midEFrom,allEdges[j].midEFrom);
+            CalculateRepulsionForceMidEdges(allEdges[i].midETo,  allEdges[j].midETo);
+            CalculateRepulsionForceMidEdges(allEdges[i].midEFrom,allEdges[j].midETo);
+            CalculateRepulsionForceMidEdges(allEdges[i].midETo,  allEdges[j].midEFrom);
         }
     }
 }
@@ -130,7 +149,8 @@ void Graph::ApplyForces(int width,int height) {
 		v.text1.setPosition( v.text1.getPosition()  + delta);
 	}
     for (Edge &e :allEdges) {
-        e.midEdgePosition += e.midEdgeForce;        
+        e.midEFrom.position += e.midEFrom.force;        
+        e.midETo.position   += e.midETo.force;        
     }
 }
 
@@ -139,35 +159,39 @@ float Graph::VertexRepulsionForce(float distance) {
     float force = distance - OPT_V_DST;
     force *= force;
     force /= -3000.f;
-    //if (distance > OPT_V_DST) force /= -100.f;
-    //std::cerr<<"VGF"<<distance / 1000.f<<" "<<force<<std::endl;
-    //return std::min(0.05f,force);
     return force;
 }
 
-float Graph::MidEdgeRepulsionForce(float distance) {
-    if (distance >= OPT_MED_DST) return 0;
-    float force = distance - OPT_MED_DST;
+float Graph::MidEdgeOtherMidEdgeRepulsionForce(float distance) {
+    if (distance >= OPT_ME_OME_DST) return 0;
+    float force = distance - OPT_ME_OME_DST;
     force *= force;
-    force /= -3000.f;
+    force /= -1000.f;
     return force;
 }
+
+float Graph::MidEdges1EdgeAttractionForce(float distance, float optDst = OPT_ME_ME_DST) {
+    float force = distance - optDst;
+    force  *= force;
+    force /= 1000.f;
+    if (distance < optDst) force *= -1.f; 
+    return std::min(distance / 100.f, force);
+}
+
 
 float Graph::EdgeAttractionForce(float distance) {
     float force = distance - OPT_E_DST;
     force *= force;
     force /= 5000.f;
     if (distance < OPT_E_DST) force *= -1.f; 
-    //std::cerr<<"EAF"<<distance / 400.f<<" "<<force<<std::endl;
     return std::min(distance / 100.f, force);
 }
 
-float Graph::MidEdgeAttractionForce(float distance) {
-    float force = distance - OPT_ME_DST;
+float Graph::MidEdgeVertexAttractionForce(float distance,float optDst = OPT_ME_V_DST) {
+    float force = distance - optDst;
     force  *= force;
-    force /= 5000.f;
-    if (distance < OPT_ME_DST) force *= -1.f; 
-    //std::cerr<<"MEAF"<<distance / 100.f<<" "<<force<<std::endl;
+    force /= 1000.f;
+    if (distance < optDst) force *= -1.f; 
     return std::min(distance / 100.f, force);
 }
 float Graph::CenterGravityForce(float distance) {
@@ -177,32 +201,47 @@ float Graph::CenterGravityForce(float distance) {
     return force;
 }
 
+float GetPtByPerc( float n1 , float n2 , float perc ) {
+    float diff = n2 - n1;
+
+    return n1 + ( diff * perc );
+}    
+
 
 void Graph::Draw(sf::RenderTarget& window,bool editLook){
-    for (Edge edge: allEdges) {        
-        float distance = getLength(vertices[edge.idVertexFrom].position,edge.midEdgePosition);
-        float angle = GetAngleByPoints(vertices[edge.idVertexFrom].position,edge.midEdgePosition);       
-        sf::RectangleShape line0(sf::Vector2f(distance, LINE_WIDTH));
-        
-        line0.setOrigin(sf::Vector2f(0, LINE_WIDTH/2));
+    for (Edge edge: allEdges) {   
+        sf::Vector2f prvPos;
+        sf::Vector2f posFrom   = vertices[edge.idVertexFrom].position;
+        sf::Vector2f posMEFrom = edge.midEFrom.position;
+        sf::Vector2f posMETo   = edge.midETo.position;
+        sf::Vector2f posTo     = vertices[edge.idVertexTo].position;
         if (editLook) edge.color = sf::Color::Black;
-        line0.setFillColor(edge.color);
-        line0.setPosition(vertices[edge.idVertexFrom].position);
-        line0.setRotation(angle*(180/M_PI));
-        window.draw(line0);
+        for( int i = 0 ; i <= EDGE_POINTS ; i++ ) {
+            float perc = (float)i / (float)EDGE_POINTS;
+            sf::Vector2f aL(GetPtByPerc(posFrom.x, posMEFrom.x ,perc), GetPtByPerc(posFrom.y, posMEFrom.y ,perc));
+            sf::Vector2f bL(GetPtByPerc(posMEFrom.x, posMETo.x ,perc), GetPtByPerc(posMEFrom.y, posMETo.y ,perc));
+            sf::Vector2f cL(GetPtByPerc(posMETo.x, posTo.x ,perc), GetPtByPerc(posMETo.y, posTo.y ,perc));
 
-        distance = getLength(edge.midEdgePosition,vertices[edge.idVertexTo].position);
-        angle = GetAngleByPoints(edge.midEdgePosition,vertices[edge.idVertexTo].position);       
-        sf::RectangleShape line(sf::Vector2f(distance, LINE_WIDTH));
+            sf::Vector2f dL(GetPtByPerc(aL.x, bL.x ,perc), GetPtByPerc(aL.y, bL.y ,perc));
+            sf::Vector2f eL(GetPtByPerc(bL.x, cL.x ,perc), GetPtByPerc(bL.y, cL.y ,perc));
+
+            sf::Vector2f pos(GetPtByPerc(dL.x , eL.x , perc), GetPtByPerc(dL.y , eL.y , perc));
+            if (i > 0) {
+                sf::RectangleShape edgeSeg(sf::Vector2f(getLength(prvPos,pos), EDGE_WIDTH));
+                edgeSeg.setFillColor(sf::Color(0,0,0,255));
+                edgeSeg.setPosition(prvPos);
+                edgeSeg.setOrigin(0,EDGE_WIDTH/2);
+                edgeSeg.setFillColor(edge.color);
+                float angle = GetAngleByPoints(prvPos,pos);  
+                edgeSeg.setRotation(angle*(180/M_PI));
+                window.draw(edgeSeg);
+            }
+            prvPos = pos;
+        }
         
-        line.setOrigin(sf::Vector2f(0, LINE_WIDTH/2));
-        if (editLook) edge.color = sf::Color::Black;
-        line.setFillColor(edge.color);
-        line.setPosition(edge.midEdgePosition);
-        line.setRotation(angle*(180/M_PI));
-        window.draw(line);
-        
+        float angle = GetAngleByPoints(edge.midETo.position,vertices[edge.idVertexTo].position);       
         angle += M_PI;
+        
         if (isDirected) {
             sf::RectangleShape arrowLine1(sf::Vector2f(ARR_H, ARR_W));
             sf::RectangleShape arrowLine2(sf::Vector2f(ARR_H, ARR_W));
@@ -259,10 +298,17 @@ void Graph::Draw(sf::RenderTarget& window,bool editLook){
     }
 
     sf::CircleShape shape2(5.f,100);
-    shape2.setFillColor(sf::Color(0,0,0,100));
+    shape2.setFillColor(sf::Color(200,0,0,200));
     shape2.setOrigin(sf::Vector2f(shape2.getGlobalBounds().width/2,shape2.getGlobalBounds().height/2));
     for (Edge edge: allEdges) {
-        shape2.setPosition(edge.midEdgePosition);
+        shape2.setPosition(edge.midEFrom.position);
         window.draw(shape2);
     }
+    shape2.setFillColor(sf::Color(0,0,200,200));
+    for (Edge edge: allEdges) {
+        shape2.setPosition(edge.midETo.position);
+        window.draw(shape2);
+    }
+
+
 }

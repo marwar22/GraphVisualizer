@@ -10,6 +10,20 @@
 #include "utils.hpp"
 #define pb push_back
 
+MidEdge::MidEdge() {
+    position.x = 0;
+    position.y = 0;
+    force.x    = 0;
+    force.y    = 0;
+}
+
+MidEdge::MidEdge(int x,int y) {
+    position.x = x;
+    position.y = y;
+    force.x    = 0;
+    force.y    = 0;
+}
+
 Edge::Edge(){
     idVertexFrom = idVertexTo = weight1 = weight2 = -1;
 }
@@ -36,18 +50,19 @@ void Edge::SetColor(sf::Color temp_color){
 
 void Graph::AddEdge(int v,int w, int weight1=0, int weight2=0) {
 	Edge edge = Edge(v, w, weight1, weight2,font);
-	edge.midEdgePosition.x = (vertices[v].position.x + vertices[w].position.x)/2;
-	edge.midEdgePosition.y = (vertices[v].position.y + vertices[w].position.y)/2;
+	edge.midEFrom.position.x = (vertices[v].position.x + vertices[w].position.x)/2;
+	edge.midEFrom.position.y = (vertices[v].position.y + vertices[w].position.y)/2;
+    edge.midETo.position = edge.midEFrom.position;
 	edge.id = allEdges.size();
     vertices[edge.idVertexFrom].edgesIdTo.push_back(edge.id);
     vertices[edge.idVertexTo].edgesIdFrom.push_back(edge.id);
     allEdges.push_back(edge);
 }
 
-void Graph::AddEdge(int v,int w, int weight1=0, int weight2=0,int midEPosX=0,int midEPosY=0) {
+void Graph::AddEdge(int v,int w, int weight1, int weight2,sf::Vector2f posE1,sf::Vector2f posE2) {
 	Edge edge = Edge(v, w, weight1, weight2,font);
-	edge.midEdgePosition.x = midEPosX;
-	edge.midEdgePosition.y = midEPosY;
+	edge.midEFrom.position = posE1;
+	edge.midETo.position = posE2;
 	edge.id = allEdges.size();
     vertices[edge.idVertexFrom].edgesIdTo.push_back(edge.id);
     vertices[edge.idVertexTo].edgesIdFrom.push_back(edge.id);

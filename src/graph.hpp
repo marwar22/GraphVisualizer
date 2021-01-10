@@ -19,19 +19,25 @@ public:
 	float CenterGravityForce(float);
 	float VertexRepulsionForce(float);
 	float EdgeAttractionForce(float);
-    float MidEdgeRepulsionForce(float);
-	float MidEdgeAttractionForce(float);
+    float MidEdgeOtherMidEdgeRepulsionForce(float);
+    float MidEdges1EdgeAttractionForce(float,float);
+	float MidEdgeVertexAttractionForce(float,float);
+
+    void CalculateRepulsionForceMidEdges(MidEdge &me1, MidEdge &me2);
 
 	void CalculateForces(const int width,const int height);
 	void ApplyForces(const int width,const int height);
 
     void AddEdge(int,int,int,int);
-    void AddEdge(int,int,int,int,int,int);
+    void AddEdge(int,int,int,int,sf::Vector2f,sf::Vector2f);
     void ChangeAll(int,int);
     void AddVertex(sf::Vector2f);
     void RemoveEdgeFromVertex(int,int);
 	void RemoveEdge(int);
     void RemoveVertex(int);
+
+    void AddMiddlePointsToEdge(Edge &);
+    float midPointRepulsionForce(sf::Vector2f, sf::Vector2f);
 
 	void Draw(sf::RenderTarget&,bool editLook);
     Graph( sf::Font *);

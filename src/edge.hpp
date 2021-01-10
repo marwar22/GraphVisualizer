@@ -6,6 +6,15 @@
 #include <SFML/System.hpp>
 #include <vector>
 #include <string>
+
+class MidEdge{
+public:
+    sf::Vector2f position;
+	sf::Vector2f force;
+    MidEdge();
+    MidEdge(int,int);
+};
+
 class Edge{
 public:
     int id, idVertexFrom, idVertexTo;
@@ -13,9 +22,9 @@ public:
 
     bool hasMultiple;
     std::vector<int> sameFromTo;
-    sf::Vector2f midEdgePosition;
-    //std::vector<sf::Vector2f> middlePoints;
-	sf::Vector2f midEdgeForce;    
+    
+    MidEdge midEFrom,midETo;
+
     sf::Text t1, t2;
     sf::Color color;
     void SetColor(sf::Color);

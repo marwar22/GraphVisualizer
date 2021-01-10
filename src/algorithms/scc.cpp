@@ -90,6 +90,8 @@ void SCC(Graph *G,StepList *StepListPtr, std::vector<int>  &chosenV) {
         VertexChange singleChange = VertexChange(v);
         initVerticesChanges.push_back(singleChange);
     }
+    Step nextStep = Step(initVerticesChanges,initEdgesChanges);
+    StepListPtr->AddState(nextStep);
     //tutaj aktualizacje all wierzhcolkow kolory bo nowy dfs
     for(int i = order.size()-1; i >= 0; i--) {
         int v = order[i];

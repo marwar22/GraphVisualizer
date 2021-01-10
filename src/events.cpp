@@ -100,23 +100,14 @@ void Application::HandleMouseButtonPressed(sf::Event &event) {
                     if( firstVertexId == -1 ) {
                         firstVertexId = v.id;
                         v.isBeingChosen = true;
-                    }else if( secondVertexId == -1 && firstVertexId != v.id ) {
+                    }else if( secondVertexId == -1 ) {
                         secondVertexId = v.id;
-                        if( !G.isWeighted ) {
-                            if( G.allEdges.empty() )
-                                G.AddEdge( firstVertexId, secondVertexId, 0, 0 );
-                            else for(Edge &e: G.allEdges ) {
-                                if( e.idVertexFrom == firstVertexId && e.idVertexTo == secondVertexId )
-                                    break;
-                                if( e.idVertexFrom == secondVertexId && e.idVertexTo == firstVertexId )
-                                    break;
-                                if( e.id == G.allEdges.size() - 1 )
-                                    G.AddEdge( firstVertexId, secondVertexId, 0, 0 );
-                            }
-                            G.vertices [ firstVertexId ].isBeingChosen = false;
-                            firstVertexId = -1;
-                            secondVertexId = -1;
-                        }
+                        //tu był if isWeighted
+                        G.AddEdge( firstVertexId, secondVertexId, 0, 0 );                    
+                        G.vertices [ firstVertexId ].isBeingChosen = false;
+                        firstVertexId = -1;
+                        secondVertexId = -1;
+                        
                     }
                     break;
                 }
@@ -133,7 +124,7 @@ void Application::HandleMouseButtonPressed(sf::Event &event) {
                         if( firstVertexId == -1 ) {
                             firstVertexId = v.id;
                             v.isBeingChosen = true;
-                        }else if( secondVertexId == -1 && firstVertexId != v.id ) {
+                        }else if( secondVertexId == -1) {
 
                             // jeżeli istnieje krawędź między firstVertexId a secondVertexId, czekaj na wpr wagi
                             secondVertexId = v.id;
@@ -152,9 +143,7 @@ void Application::HandleMouseButtonPressed(sf::Event &event) {
             }
                 /// część po wybraniu 2 wierzchołków w innej części programu            
         }
-        break; //???
-            
-
+            break; //???
         case removeE:
             for (Vertex &v: G.vertices) {            
                 int dx = v.position.x - event.mouseButton.x;
@@ -163,7 +152,7 @@ void Application::HandleMouseButtonPressed(sf::Event &event) {
                     if( firstVertexId == -1 ) {
                         firstVertexId = v.id;
                         v.isBeingChosen = true;
-                    }else if( secondVertexId == -1 && firstVertexId != v.id ) {
+                    }else if( secondVertexId == -1) {
                         secondVertexId = v.id;
                         for(Edge &e: G.allEdges ) {
                             if( e.idVertexFrom == firstVertexId && e.idVertexTo == secondVertexId ) {

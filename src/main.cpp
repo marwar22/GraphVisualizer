@@ -16,7 +16,7 @@ int main()
     Application app;
     //app.buttons[0] = Button(1000,600,200,50,"przycisk",&app.font,SetTextToMousePosition);    
     //Button B2(1000,700,200,50,"przycisk2",&app.font,Test);
-    int n = 2, m = 0;
+    int n = 10, m = 0;
     for (int i = 0; i < n; ++i) app.G.AddVertex(sf::Vector2f(los(0,1600),los(0,800)));
     for (int i = 0; i < n; ++i){
         for (int j = i + 1; j < n; ++j) {

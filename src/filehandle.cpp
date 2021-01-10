@@ -95,7 +95,7 @@ void ReadFile( const char * name, Graph * G )
         w2 = ReadInt(&ff);
         mdpx = ReadInt(&ff);
         mdpy = ReadInt(&ff);
-        G->AddEdge(fr, to, w1, w2);
+        G->AddEdge(fr, to, w1, w2,sf::Vector2f(mdpx,mdpy),sf::Vector2f(mdpx,mdpy));
     }
 }
 void WriteFile(const char* name, Graph* G)
@@ -117,7 +117,7 @@ void WriteFile(const char* name, Graph* G)
         WriteInt(G->allEdges[i].idVertexTo, &ff);
         WriteInt(G->allEdges[i].weight1, &ff);
         WriteInt(G->allEdges[i].weight2, &ff);
-        WriteInt(G->allEdges[i].midEdgePosition.x, &ff);
-        WriteInt(G->allEdges[i].midEdgePosition.y, &ff);
+        WriteInt(G->allEdges[i].midEFrom.position.x, &ff);
+        WriteInt(G->allEdges[i].midETo.position.y, &ff);
     }
 }
