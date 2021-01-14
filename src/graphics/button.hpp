@@ -16,6 +16,8 @@ public:
     std::function<void(Application &app,Button&,sf::Event&)> OnClick;
     int x, y;
     int width, height;
+    long double scale;
+    bool ifThisIsTextBox;
     void draw(sf::RenderTarget&);
     void SetColor(sf::Color);
     

@@ -15,7 +15,7 @@ public:
     sf::Text text;
     int x, y;
     int width, height;
-    void draw(sf::RenderTarget&);
+    void Draw(sf::RenderTarget&);
     void SetColor(sf::Color);
     
     TextBox(int, int, int, int, std::string,sf::Font *);

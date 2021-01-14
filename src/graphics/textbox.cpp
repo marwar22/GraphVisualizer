@@ -29,7 +29,7 @@ void TextBox::SetColor(sf::Color color) {
     text.setFillColor(color);
 }
 
-void TextBox::draw(sf::RenderTarget& window) {
+void TextBox::Draw(sf::RenderTarget& window) {
       window.draw(rectangle);
       window.draw(text);
 }

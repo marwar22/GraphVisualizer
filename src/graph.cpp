@@ -209,12 +209,15 @@ float GetPtByPerc( float n1 , float n2 , float perc ) {
 
 
 void Graph::Draw(sf::RenderTarget& window,bool editLook){
+    sf::Vector2f dbg1,dbg2;
     for (Edge edge: allEdges) {   
         sf::Vector2f prvPos;
         sf::Vector2f posFrom   = vertices[edge.idVertexFrom].position;
         sf::Vector2f posMEFrom = edge.midEFrom.position;
         sf::Vector2f posMETo   = edge.midETo.position;
         sf::Vector2f posTo     = vertices[edge.idVertexTo].position;
+        float angleArrow = 10000;
+        bool wasInside = false;
         if (editLook) edge.color = sf::Color::Black;
         for( int i = 0 ; i <= EDGE_POINTS ; i++ ) {
             float perc = (float)i / (float)EDGE_POINTS;
@@ -235,12 +238,20 @@ void Graph::Draw(sf::RenderTarget& window,bool editLook){
                 float angle = GetAngleByPoints(prvPos,pos);  
                 edgeSeg.setRotation(angle*(180/M_PI));
                 window.draw(edgeSeg);
+                if (!wasInside) {
+                    if (getLength(pos,vertices[edge.idVertexTo].position) <= V_RADIUS) {
+                        dbg1 = pos;
+                        dbg2 = prvPos;
+                        angleArrow = GetAngleByPoints(pos,prvPos);
+                        wasInside = true;
+                    }                    
+                }
             }
             prvPos = pos;
         }
         
-        float angle = GetAngleByPoints(edge.midETo.position,vertices[edge.idVertexTo].position);       
-        angle += M_PI;
+        //angleArrow = GetAngleByPoints(edge.midETo.position,vertices[edge.idVertexTo].position);       
+        //angleArrow += M_PI;
         
         if (isDirected) {
             sf::RectangleShape arrowLine1(sf::Vector2f(ARR_H, ARR_W));
@@ -249,11 +260,11 @@ void Graph::Draw(sf::RenderTarget& window,bool editLook){
             arrowLine2.setOrigin(sf::Vector2f(0, 0));
             arrowLine1.setFillColor(edge.color);
             arrowLine2.setFillColor(edge.color);
-            arrowLine1.setPosition(vertices[edge.idVertexTo].position + sf::Vector2f(cos(angle)*V_RADIUS, sin(angle)*V_RADIUS)); // jaka konwencja from/to
-            arrowLine2.setPosition(vertices[edge.idVertexTo].position + sf::Vector2f(cos(angle)*V_RADIUS, sin(angle)*V_RADIUS)); // jaka konwencja from/to
+            arrowLine1.setPosition(vertices[edge.idVertexTo].position + sf::Vector2f(cos(angleArrow)*V_RADIUS, sin(angleArrow)*V_RADIUS)); // jaka konwencja from/to
+            arrowLine2.setPosition(vertices[edge.idVertexTo].position + sf::Vector2f(cos(angleArrow)*V_RADIUS, sin(angleArrow)*V_RADIUS)); // jaka konwencja from/to
 
-            arrowLine1.setRotation(angle*(180/M_PI) + 45);
-            arrowLine2.setRotation(angle*(180/M_PI) - 45);
+            arrowLine1.setRotation(angleArrow*(180/M_PI) + 45);
+            arrowLine2.setRotation(angleArrow*(180/M_PI) - 45);
             window.draw(arrowLine1);
             window.draw(arrowLine2);
         }
@@ -297,18 +308,21 @@ void Graph::Draw(sf::RenderTarget& window,bool editLook){
         window.draw(v.subText2);
     }
 
-    sf::CircleShape shape2(5.f,100);
-    shape2.setFillColor(sf::Color(200,0,0,200));
+    sf::CircleShape shape2(1.f,100);
+    shape2.setFillColor(sf::Color(200,0,0,255));
     shape2.setOrigin(sf::Vector2f(shape2.getGlobalBounds().width/2,shape2.getGlobalBounds().height/2));
     for (Edge edge: allEdges) {
         shape2.setPosition(edge.midEFrom.position);
-        window.draw(shape2);
+        //window.draw(shape2);
     }
-    shape2.setFillColor(sf::Color(0,0,200,200));
+    shape2.setFillColor(sf::Color(0,200,0,255));
     for (Edge edge: allEdges) {
         shape2.setPosition(edge.midETo.position);
-        window.draw(shape2);
+        //window.draw(shape2);
     }
+    shape2.setPosition(dbg1);
+    window.draw(shape2);
 
-
+    shape2.setPosition(dbg2);
+    window.draw(shape2);
 }

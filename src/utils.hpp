@@ -10,7 +10,7 @@ const float OPT_ME_ME_DST = 30.f;
 
 const float V_RADIUS   = 15.f;
 const float EDGE_WIDTH = 3.f;
-const int EDGE_POINTS  = 10;  //dokładność rysowana krzywej
+const int EDGE_POINTS  = 50;  //dokładność rysowana krzywej
 
 const int GRAPH_AREA_WIDTH   = 1920;
 const int GRAPH_AREA_HEIGHT  = 980;

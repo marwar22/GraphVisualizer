@@ -4,6 +4,8 @@
 #include <iostream>
 #include <random>
 #include <climits>
+#include <algorithm>
+
 #include "app.hpp"
 #include "graph.hpp"
 #include "graphics/button.hpp"
@@ -125,7 +127,6 @@ void Application::HandleMouseButtonPressed(sf::Event &event) {
                             firstVertexId = v.id;
                             v.isBeingChosen = true;
                         }else if( secondVertexId == -1) {
-
                             // jeżeli istnieje krawędź między firstVertexId a secondVertexId, czekaj na wpr wagi
                             secondVertexId = v.id;
                             for(Edge &e: G.allEdges ) {
@@ -133,7 +134,8 @@ void Application::HandleMouseButtonPressed(sf::Event &event) {
                                     || ( e.idVertexFrom == secondVertexId && e.idVertexTo == firstVertexId )){
                                         v.isBeingChosen = true;
                                         selectedEdgeId = e.id; 
-                                        e.weight1=1;}
+                                        //e.weight1=1;
+                                        }
                             }
                             if (selectedEdgeId == -1)
                                 secondVertexId = -1;
@@ -208,11 +210,8 @@ char Application::getCharFromInput(sf::Event &event){
     return static_cast<char>(event.text.unicode);
 }
 
-void Application::HandleTextEntered(sf::Event &event) {
+void Application::HandleTextEntered(sf::Event &event) {//j
     char letter = getCharFromInput(event);//SPRAWDZIC DZIALANIE ENTER'A NA WINDOWSIE, JEZELI CHCEMY WIDNOWSA TEZ
-    //std::cerr<<"zbieram znaki z wejscia "<<letter<<" "<<(int)letter<<"\n";
-    //if((int)letter == 13) std::cerr<<"jestem w enterze\n";    ENTER I BACKSPACE DZIALAJA
-    //if((int)letter == 8) std::cerr<<"BACKSPACE\n";
     if(aktualnyStan == saveFile || aktualnyStan == readFile) {
         if(letter == 8) textEntered.pop_back();
         else if(letter == 13) {
@@ -235,7 +234,7 @@ void Application::HandleTextEntered(sf::Event &event) {
             secondVertexId = -1;
         } //enter
         else if((int)letter == 8) {G.allEdges[selectedEdgeId].weight1 /= 10;} //backspace
-        else if(G.allEdges[selectedEdgeId].weight1 <= (INT_MAX - 100) / 10){
+        else if(G.allEdges[selectedEdgeId].weight1 <= (INT_MAX - 100) / 10 && int(letter) - 48 >= 0 && int(letter) - 48 <= 9){
                 G.allEdges[selectedEdgeId].weight1 = G.allEdges[selectedEdgeId].weight1 * 10 + (int(letter) - 48);
         }
     }

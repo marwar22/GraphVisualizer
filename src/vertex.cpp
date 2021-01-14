@@ -27,6 +27,7 @@ Vertex::Vertex(sf::Vector2f __position, int __id, sf::Font& font){
     subText2.setCharacterSize(20);
     force = sf::Vector2f(0.f,0.f);
     color = sf::Color::Red;
+    data1 = data2 = 0;
     isBeingChosen = false;
 }
 

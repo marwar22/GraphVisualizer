@@ -28,16 +28,7 @@ public:
     sf::Font font;
     Graph G;
     StepList stepLista;
-    /*enum buttonsEnum {
-        buttonAddV, buttonRemoveV,
-        buttonAddE, buttonRemoveE,
-        buttonSymulacjaSily,
-        buttonOdczyt,
-        buttonZapis,
-        buttonDfs,
-        buttonPokazKlik, buttonPokazPozycje,
-        buttonBfs
-    };*///i wszystkie pozostale algorytmy tez maja button
+   
     std::vector<Button> buttons;
     std::vector<Button> buttonsAlg;
     std::vector<Button> buttonsAlgR;
@@ -74,9 +65,5 @@ public:
     void HandleMouseMoved(sf::Event &event);
     void HandleTextEntered(sf::Event &event);
 };
-
-
-
-
 
 #endif

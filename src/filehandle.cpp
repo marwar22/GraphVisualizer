@@ -74,7 +74,7 @@ void ReadFile( const char * name, Graph * G )
     G->vertices.clear();
     G->allEdges.clear();
     float itf;
-    int vs, es, fr, to, w1, w2, mdpx, mdpy;
+    int vs, es, fr, to, w1, w2, mdpx, mdpy, mdpx2, mdpy2;
     sf::Vector2f tmp;
     std::ifstream ff(name, std::ios::binary | std::ios::in);
     G->isDirected = ReadBool(&ff);
@@ -95,7 +95,9 @@ void ReadFile( const char * name, Graph * G )
         w2 = ReadInt(&ff);
         mdpx = ReadInt(&ff);
         mdpy = ReadInt(&ff);
-        G->AddEdge(fr, to, w1, w2,sf::Vector2f(mdpx,mdpy),sf::Vector2f(mdpx,mdpy));
+        mdpx2 = ReadInt(&ff);
+        mdpy2 = ReadInt(&ff);
+        G->AddEdge(fr, to, w1, w2,sf::Vector2f(mdpx,mdpy),sf::Vector2f(mdpx2,mdpy2));
     }
 }
 void WriteFile(const char* name, Graph* G)
@@ -118,6 +120,8 @@ void WriteFile(const char* name, Graph* G)
         WriteInt(G->allEdges[i].weight1, &ff);
         WriteInt(G->allEdges[i].weight2, &ff);
         WriteInt(G->allEdges[i].midEFrom.position.x, &ff);
+        WriteInt(G->allEdges[i].midEFrom.position.y, &ff);
+        WriteInt(G->allEdges[i].midETo.position.x, &ff);
         WriteInt(G->allEdges[i].midETo.position.y, &ff);
     }
 }
