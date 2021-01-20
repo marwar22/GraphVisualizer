@@ -90,6 +90,7 @@ void Application::HandleMouseButtonPressed(sf::Event &event) {
                     chosenVertices.push_back( v.id );
                     aktualnyStan = algorithmR;
                     algorithms[algorithmId](&G,&stepLista,chosenVertices);
+                    stepLista.GoRight();
                     break;
                 }
             }
@@ -118,36 +119,20 @@ void Application::HandleMouseButtonPressed(sf::Event &event) {
         
         case editE:
         {
-            if (selectedEdgeId == -1){ /// jeszcze nie wybrano 2 krawędzi
-                for (Vertex &v: G.vertices) {
-                    int dx = v.position.x - event.mouseButton.x;
-                    int dy = v.position.y - (event.mouseButton.y - TOOLBAR_HEIGHT);
-                    if (sqrt(dx*dx+dy*dy) <= V_RADIUS) {
-                        if( firstVertexId == -1 ) {
-                            firstVertexId = v.id;
-                            v.isBeingChosen = true;
-                        }else if( secondVertexId == -1) {
-                            // jeżeli istnieje krawędź między firstVertexId a secondVertexId, czekaj na wpr wagi
-                            secondVertexId = v.id;
-                            for(Edge &e: G.allEdges ) {
-                                if( (e.idVertexFrom == firstVertexId && e.idVertexTo == secondVertexId) 
-                                    || ( e.idVertexFrom == secondVertexId && e.idVertexTo == firstVertexId )){
-                                        v.isBeingChosen = true;
-                                        selectedEdgeId = e.id; 
-                                        //e.weight1=1;
-                                        }
-                            }
-                            if (selectedEdgeId == -1)
-                                secondVertexId = -1;
-                        }
-                    }
+            for (Edge &e: G.allEdges) {
+                int dx = e.dataPoint.x - event.mouseButton.x;
+                int dy = e.dataPoint.y - (event.mouseButton.y - TOOLBAR_HEIGHT);
+                e.isHighlighted = false;
+                if (sqrt(dx*dx+dy*dy) <= V_DATA_RADIUS) {
+                    selectedEdgeId = e.id; 
+                    std::cerr<<"nowy isHighlighted: "<<e.id<<"\n";
+                    e.isHighlighted = true;
                 }
             }
-                /// część po wybraniu 2 wierzchołków w innej części programu            
         }
-            break; //???
+            break;
         case removeE:
-            for (Vertex &v: G.vertices) {            
+            /*for (Vertex &v: G.vertices) {            
                 int dx = v.position.x - event.mouseButton.x;
                 int dy = v.position.y - (event.mouseButton.y - TOOLBAR_HEIGHT);
                 if (sqrt(dx*dx+dy*dy) <= V_RADIUS) {
@@ -171,6 +156,15 @@ void Application::HandleMouseButtonPressed(sf::Event &event) {
                         firstVertexId = -1;
                         secondVertexId = -1;
                     }
+                    break;
+                }
+            }*/
+            for (Edge &e: G.allEdges) {
+                int dx = e.dataPoint.x - event.mouseButton.x;
+                int dy = e.dataPoint.y - (event.mouseButton.y - TOOLBAR_HEIGHT);
+                
+                if (sqrt(dx*dx+dy*dy) <= V_DATA_RADIUS) {
+                    G.RemoveEdge(e.id);
                     break;
                 }
             }
@@ -226,12 +220,14 @@ void Application::HandleTextEntered(sf::Event &event) {//j
     if (aktualnyStan == editE && selectedEdgeId != -1) {
         if     ((int)letter == 45) {G.allEdges[selectedEdgeId].weight1 *= (-1);} // zmiana znaku
         else if((int)letter == 13) {
-            selectedEdgeId = -1; 
-            G.vertices[firstVertexId].isBeingChosen = false;
-            G.vertices[secondVertexId].isBeingChosen = false;
+            // selectedEdgeId
+            // selectedEdgeId = -1;
+            ClearSelected();
+            // G.vertices[firstVertexId].isBeingChosen = false;
+            // G.vertices[secondVertexId].isBeingChosen = false;
 
-            firstVertexId = -1; 
-            secondVertexId = -1;
+            // firstVertexId = -1; 
+            // secondVertexId = -1;
         } //enter
         else if((int)letter == 8) {G.allEdges[selectedEdgeId].weight1 /= 10;} //backspace
         else if(G.allEdges[selectedEdgeId].weight1 <= (INT_MAX - 100) / 10 && int(letter) - 48 >= 0 && int(letter) - 48 <= 9){
@@ -249,6 +245,7 @@ void Application::HandleEvent(sf::Event &event) {
         // update the view to the new size of the window
         sf::FloatRect visibleArea(0, 0, event.size.width, event.size.height);
         window.setView(sf::View(visibleArea));
+        simulateForces = true;
     }
     if(event.type == sf::Event::TextEntered)          HandleTextEntered(event);       
 }

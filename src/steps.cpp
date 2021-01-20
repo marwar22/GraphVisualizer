@@ -21,11 +21,12 @@ VertexChange::VertexChange(const Vertex &v){
 VertexChange::VertexChange(){}
 EdgeChange::EdgeChange(){}
 
-EdgeChange::EdgeChange(int __id, int __weight1, int __weight2, sf::Color __color){
+EdgeChange::EdgeChange(int __id, int __weight1, int __weight2, sf::Color __color, bool __isHighlighted){
     id = __id;
     weight1 = __weight1;
     weight2 = __weight2;
     color = __color;
+    isHighlighted = __isHighlighted;
 };
 
 EdgeChange::EdgeChange(const Edge &e){
@@ -33,6 +34,7 @@ EdgeChange::EdgeChange(const Edge &e){
     weight1 = e.weight1;
     weight2 = e.weight2;
     color = e.color;
+    isHighlighted = e.isHighlighted;
 }
 
 Step::Step(std::vector<VertexChange> __verticesChanges, std::vector<EdgeChange> __edgesChanges){
@@ -84,6 +86,7 @@ void StepList::AddBackwardsState(Step step){
         ec.weight1 = G->allEdges[ec.id].weight1;
         ec.weight2 = G->allEdges[ec.id].weight2;
         ec.color   = G->allEdges[ec.id].color;
+        ec.isHighlighted = G->allEdges[ec.id].isHighlighted;
     }
 
     backwardSteps.push_back(step);
@@ -102,6 +105,8 @@ void StepList::GoLeft() {
         G->allEdges[ec.id].weight1 = ec.weight1;
         G->allEdges[ec.id].weight2 = ec.weight2;
         G->allEdges[ec.id].color = ec.color;
+        G->allEdges[ec.id].isHighlighted = ec.isHighlighted;
+
     }
 }
 
@@ -122,6 +127,7 @@ void StepList::GoRight() {
         G->allEdges[ec.id].weight1 = ec.weight1;
         G->allEdges[ec.id].weight2 = ec.weight2;
         G->allEdges[ec.id].color = ec.color;
+        G->allEdges[ec.id].isHighlighted = ec.isHighlighted;
     }
 }
 

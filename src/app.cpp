@@ -39,6 +39,11 @@ void Application::ClearSelected() {
         G.vertices[secondVertexId].isBeingChosen = false;
         secondVertexId = -1;
     }
+
+    if (selectedEdgeId != -1) {
+        G.allEdges[selectedEdgeId].isHighlighted = false;
+        selectedEdgeId = -1;
+    }
 }
 void ButtonRemoveVertex(Application &app,Button &thisButton,sf::Event &event) {app.aktualnyStan = removeV;}
 void ButtonAddVertex(Application    &app,Button &thisButton,sf::Event &event) {app.aktualnyStan = addV;}
@@ -51,6 +56,7 @@ void ButtonAlgorithm(Application    &app,Button &thisButton,sf::Event &event) {
     app.simulateForces = false;
     app.runningForward = false;
     app.aktualnyStan = algorithmC; 
+    app.G.befAlgIsDirected = app.G.isDirected;
    }
 void PlayAlgorithm(Application    &app,Button &thisButton,sf::Event &event) {
     app.runningForward = true;
@@ -88,10 +94,13 @@ void ButtonReturnToAlgChoose(Application    &app,Button &thisButton,sf::Event &e
     app.runningForward = false;
     app.runningBack = false;
     app.aktualnyStan = algorithmC;
+    app.G.isDirected = app.G.befAlgIsDirected;
     for (Vertex &v: app.G.vertices)
         v.color = sf::Color::Red;
-    for (Edge &e: app.G.allEdges)
+    for (Edge &e: app.G.allEdges){
         e.color = sf::Color::Black;
+        e.isHighlighted = false;
+    }
 } 
 void ButtonStepRight(Application    &app,Button &thisButton,sf::Event &event) {
     app.stepLista.GoRight();
@@ -105,33 +114,28 @@ void ButtonRunDFS(Application       &app,Button &thisButton,sf::Event &event) {
     app.stepLista.ClearStates();
     ChooseVertexInit(app);
     app.algorithmId = 0;
-    app.stepLista.GoRight();
 }
 void ButtonRunBFS(Application       &app,Button &thisButton,sf::Event &event) {
     app.stepLista.ClearStates();
     ChooseVertexInit(app);
     app.algorithmId = 1;
-    app.stepLista.GoRight();
 }
 void ButtonRunDIJKSTRA(Application  &app,Button &thisButton,sf::Event &event) {
     app.stepLista.ClearStates();
     ChooseVertexInit(app);
     app.algorithmId = 2;
-    app.stepLista.GoRight();
 }
 void ButtonRunSCC(Application       &app,Button &thisButton,sf::Event &event) {
     app.stepLista.ClearStates();
     app.aktualnyStan = algorithmR;
     app.algorithmId = 3;
     app.algorithms[app.algorithmId](&(app.G),&(app.stepLista),app.chosenVertices);
-    app.stepLista.GoRight();
 }
 
-void ButtonRunPostorder(Application       &app,Button &thisButton,sf::Event &event) {
+void ButtonRunPostorder(Application &app,Button &thisButton,sf::Event &event) {
     app.stepLista.ClearStates();
     ChooseVertexInit(app);
     app.algorithmId = 4;
-    app.stepLista.GoRight();
 }
 
 void ButtonRunMST(Application       &app,Button &thisButton,sf::Event &event) {
@@ -139,14 +143,12 @@ void ButtonRunMST(Application       &app,Button &thisButton,sf::Event &event) {
     app.stepLista.ClearStates();
     ChooseVertexInit(app);
     app.algorithmId = 5;
-    app.stepLista.GoRight();
 }
 
 void ButtonRunColors(Application    &app,Button &thisButton,sf::Event &event) {
     app.stepLista.ClearStates();
     ChooseVertexInit(app);
     app.algorithmId = 6;
-    app.stepLista.GoRight();
 }
 
 void ButtonGraphDirected(Application    &app,Button &thisButton,sf::Event &event) {
@@ -157,10 +159,10 @@ void ButtonNothing(Application &app,Button &thisButton,sf::Event &event){}
 //void SetTextToMousePosition(Application &app,Button &thisButton,sf::Event &event) {   
 //    thisButton.text.setString(std::to_string(event.mouseButton.x) + "x "+ std::to_string(event.mouseButton.y)+ "y");}
 void ButtonIncreaseAlgSpeed(Application    &app,Button &thisButton,sf::Event &event) {
-    app.timeStep *= 2; 
+    app.timeStep /= 2; 
 }
 void ButtonDecreaseAlgSpeed(Application    &app,Button &thisButton,sf::Event &event) {
-    app.timeStep /= 2; 
+    app.timeStep *= 2; 
 }
 Application::Application()
 {
@@ -295,15 +297,15 @@ void Application::Run() {
 
         sf::Vector2i mousePosition = sf::Mouse::getPosition(window);
        
-        if(simulateForces)
-        {
-            G.CalculateForces(window.getSize().x,window.getSize().y-TOOLBAR_HEIGHT);//to wtedy i tlyko wtedy gdy aktualny stan na symulacje sily
-            G.ApplyForces(window.getSize().x,window.getSize().y-TOOLBAR_HEIGHT);
-        } else {
+        //if(simulateForces)
+        //{
+        G.CalculateForces(window.getSize().x,window.getSize().y-TOOLBAR_HEIGHT,simulateForces);
+        G.ApplyForces(window.getSize().x,window.getSize().y-TOOLBAR_HEIGHT);
+        /*} else {
             for (Vertex &v: G.vertices) {
                 v.KeepInGraphArea(window.getSize().x,window.getSize().y-TOOLBAR_HEIGHT);
             }
-        }
+        }*/
         if(runningForward && aktualnyStan == algorithmR){
             long double tt= clock();
             tt /= CLOCKS_PER_SEC;
@@ -345,7 +347,7 @@ void Application::RenderGraphArea(){
     GraphArea.create(window.getSize().x,window.getSize().y-TOOLBAR_HEIGHT,settings);
     GraphArea.clear(sf::Color::Blue);
 
-    G.Draw(GraphArea,aktualnyStan != algorithmR);
+    G.Draw(GraphArea,aktualnyStan != algorithmR, (aktualnyStan == editE || aktualnyStan == removeE));
      
     GraphArea.display();
     sf::Sprite GraphAreaSprite;
@@ -356,7 +358,7 @@ void Application::RenderGraphArea(){
 
 int TotalLength( std::vector<Button>* buttonsv )
 {
-    int totalLength;
+    int totalLength = 0;
     for (int i=0; i<buttonsv->size(); ++i) {totalLength += (*buttonsv)[i].width + BUTTON_SPACING;}
     if(buttonsv->size() > 0) totalLength += BUTTON_SPACING;
     return totalLength;
@@ -365,72 +367,102 @@ int TotalLength( std::vector<Button>* buttonsv )
 
 void SetPositionsForButtons( std::vector<Button>* buttonsv, Application* app )
 {
-    long double scale, xdb, ydb, btspdb, hdb, ldb;
+    //TOOLBAR_HEIGHT = 110;
+    long double scale, xdb, ydb, btspdb, hdb, ldb, scalenxt;
     int l;
     scale = 1;
-    for( ; scale >= 0.85; scale -= 0.3 ){
-        ldb = TotalLength(buttonsv);
+    for( ; scale >= 0.85; scale -= BUTTON_SCALE_DELTA ){
+        l = TotalLength(buttonsv);
+        ldb = l;
         ldb *= scale;
-        btspdb = BUTTON_SPACING;
-        btspdb *= scale;
-        if( ldb <= app->window.getSize().x ){
+        l = ldb;
+        if( l <= app->window.getSize().x ){
+            btspdb = BUTTON_SPACING;
+            btspdb *= scale;
             l = btspdb;
             (*buttonsv)[0].x = l;
             (*buttonsv)[0].scale = scale;
             (*buttonsv)[0].y = 25;
-            xdb = (*buttonsv)[0].width; //było i, ale i jest podobne do 0
+            xdb = (*buttonsv)[0].width;
             xdb *= scale;
             l += xdb + btspdb;
             for (int i = 1; i< buttonsv->size();++i) {
+                (*buttonsv)[i].x = l;
+                (*buttonsv)[i].y = 25;
+                (*buttonsv)[i].scale = scale;
                 xdb = (*buttonsv)[i].width;
                 xdb *= scale;
                 l += xdb + btspdb;
-                (*buttonsv)[i].x = (*buttonsv)[i-1].x + (*buttonsv)[i-1].width + BUTTON_SPACING;
-                (*buttonsv)[i].y = 25;
-                (*buttonsv)[i].scale = 1;
             }
+            return;
         }
     }
-    int i = 0;
-    l = BUTTON_SPACING;
-    for( ; l <= app->window.getSize().x && i < buttonsv->size(); ){
-        l += (*buttonsv)[i].width + BUTTON_SPACING;
-        i++;
-    }
-    if( l > app->window.getSize().x ){
-        i--;
-        l -= (*buttonsv)[i].width + BUTTON_SPACING;
-    }
-    l = BUTTON_SPACING;
-    for( ; l <= app->window.getSize().x && i < buttonsv->size(); ){
-        l += (*buttonsv)[i].width + BUTTON_SPACING;
-        i++;
-    }
-    if( l <= app->window.getSize().x ){
-        i = 0, l = BUTTON_SPACING;
+    int i;
+    scale = 0.85;
+    for( ; scale >= 0.64; scale -= BUTTON_SCALE_DELTA ){
+        i = 0;
+        btspdb = BUTTON_SPACING;
+        btspdb *= scale;
+        l = btspdb;
         for( ; l <= app->window.getSize().x && i < buttonsv->size(); ){
-            (*buttonsv)[i].x = l;
-            (*buttonsv)[i].y = 2;
-            (*buttonsv)[i].scale = 1;
-            l += (*buttonsv)[i].width + BUTTON_SPACING;
+            xdb = (*buttonsv)[i].width;
+            xdb *= scale;
+            l += xdb + btspdb;
             i++;
         }
         if( l > app->window.getSize().x ){
             i--;
+            xdb = (*buttonsv)[i].width;
+            xdb *= scale;
+            l -= xdb + btspdb;
         }
-        l = BUTTON_SPACING;
+        l = btspdb;
         for( ; l <= app->window.getSize().x && i < buttonsv->size(); ){
-            (*buttonsv)[i].x = l;
-            (*buttonsv)[i].y = 52;
-            (*buttonsv)[i].scale = 1;
-            l += (*buttonsv)[i].width + BUTTON_SPACING;
+            xdb = (*buttonsv)[i].width;
+            xdb *= scale;
+            l += xdb + btspdb;
             i++;
         }
-    }else{
-        for( int k = 3; k < 100; k++ ){
+        if( l <= app->window.getSize().x ){
+            i = 0, l = btspdb;
+            for( ; l <= app->window.getSize().x && i < buttonsv->size(); ){
+                (*buttonsv)[i].x = l;
+                (*buttonsv)[i].y = 4;
+                (*buttonsv)[i].scale = scale;
+                xdb = (*buttonsv)[i].width;
+                xdb *= scale;
+                l += xdb + btspdb;
+                i++;
+            }
+            if( l > app->window.getSize().x ){
+                i--;
+            }
+            l = btspdb;
+            for( ; l <= app->window.getSize().x && i < buttonsv->size(); ){
+                (*buttonsv)[i].x = l;
+                (*buttonsv)[i].y = 52;
+                (*buttonsv)[i].scale = scale;
+                xdb = (*buttonsv)[i].width;
+                xdb *= scale;
+                l += xdb + btspdb;
+                i++;
+            }
+            return;
+        }
+    }
+    for( int k = 3; k < 100; k++ ){
+        scale = 1.8;
+        scale /= k;
+        scale *= 0.9;
+        scalenxt = 1.8;
+        scalenxt /= k + 1;
+        scalenxt *= 0.9;
+        for( int l = 3; l < k; l++ ){
+            scale *= 0.9;
+            scalenxt *= 0.9;
+        }
+        for( ; scale >= scalenxt; scale -= BUTTON_SCALE_DELTA ){
             i = 0;
-            scale = 2;
-            scale /= k;
             hdb = BUTTON_HEIGHT;
             hdb *= scale;
             btspdb = BUTTON_SPACING;
@@ -456,7 +488,8 @@ void SetPositionsForButtons( std::vector<Button>* buttonsv, Application* app )
                 for( int j = 0; j < k; j++ )
                 {
                     l = btspdb;
-                    ydb = 2 + ( hdb + 2.5 ) * j;
+                    ydb = 6 + ( hdb + 6 ) * j;
+                    //TOOLBAR_HEIGHT = ydb + hdb + 10;
                     for( ; l <= app->window.getSize().x && i < buttonsv->size(); ){
                         (*buttonsv)[i].x = l;
                         (*buttonsv)[i].y = ydb;
@@ -473,7 +506,7 @@ void SetPositionsForButtons( std::vector<Button>* buttonsv, Application* app )
                         l -= xdb + btspdb;
                     }
                 }
-                break;
+                return;
             }
         }
     }
@@ -501,7 +534,7 @@ void Application::RenderToolBar() {
             }
             break;
         case algorithmR:
-            stringStream << std::fixed << std::setprecision(3) << std::round(timeStep * 64000)/1000;
+            stringStream << std::fixed << std::setprecision(3) << std::round(1000/timeStep)/1000;
             stringSpeed = stringStream.str();
             buttonsAlgR[8].text.setString(stringSpeed);
             SetPositionsForButtons( &buttonsAlgR, this );
@@ -531,4 +564,8 @@ void Application::RenderToolBar() {
     toolBarSprite.setTexture(toolBar.getTexture());
     toolBarSprite.setPosition(0,0);
     window.draw(toolBarSprite);    
+}
+
+
+void Application::RenderFileNameTyping() {
 }

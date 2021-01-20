@@ -54,6 +54,7 @@ public:
     void Run();
     void CheckPodswietlenie(sf::Vector2i);
     void Render();
+    void RenderFileNameTyping();
     void RenderToolBar();
     void RenderGraphArea();
     void ClearSelected();

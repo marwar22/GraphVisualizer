@@ -20,7 +20,10 @@ public:
     int id, idVertexFrom, idVertexTo;
     int weight1, weight2;
 
+    sf::Vector2f dataPoint;
+
     bool hasMultiple;
+    bool isHighlighted;
     std::vector<int> sameFromTo;
     
     MidEdge midEFrom,midETo;

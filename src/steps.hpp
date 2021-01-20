@@ -17,9 +17,10 @@ struct VertexChange {
 struct EdgeChange{
     int id;
     int weight1, weight2;
+    bool isHighlighted;
     sf::Color color;
     EdgeChange();
-    EdgeChange(int, int, int, sf::Color);
+    EdgeChange(int, int, int, sf::Color, bool);
     EdgeChange(const Edge &);
 };
 

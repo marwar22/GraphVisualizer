@@ -2,6 +2,7 @@
 #include <SFML/Window.hpp>
 #include <SFML/System.hpp>
 #include "button.hpp"
+#include "../utils.hpp"
 
 
 Button::Button() {
@@ -68,6 +69,7 @@ void Button::draw(sf::RenderTarget& window) {
     rectangle.setSize(sf::Vector2f(widthdb,heightdb));
     chrsize = 20;
     chrsize *= scale;
+    chrsize *= BUTTON_FONT_SCALE;
     text.setCharacterSize(chrsize);
     text.setOrigin(sf::Vector2f(text.getGlobalBounds().width/2,text.getGlobalBounds().height/2));
     text.setPosition(x + widthdb / 2, y + heightdb / 2 - 2);   

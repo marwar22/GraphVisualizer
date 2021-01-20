@@ -26,6 +26,7 @@ MidEdge::MidEdge(int x,int y) {
 
 Edge::Edge(){
     idVertexFrom = idVertexTo = weight1 = weight2 = -1;
+    isHighlighted = false;
 }
 
 Edge::Edge(int v, int w, int w1, int w2,sf::Font *font) {
@@ -33,7 +34,9 @@ Edge::Edge(int v, int w, int w1, int w2,sf::Font *font) {
     idVertexTo = w;
     weight1 = w1;
     weight2 = w2;
+    isHighlighted = false;
     color = sf::Color::Black;//defaultowo na czarny
+    dataPoint = sf::Vector2f(0,0);
     t1.setFont(*font);
     t2.setFont(*font);
     t1.setString(std::to_string(w1));

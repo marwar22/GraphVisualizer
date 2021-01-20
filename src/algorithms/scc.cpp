@@ -123,4 +123,5 @@ void SCC(Graph *G,StepList *StepListPtr, std::vector<int>  &chosenV) {
         }
     }
     //return DFSStepList;
+    order.clear();
 }

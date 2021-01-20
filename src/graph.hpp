@@ -15,7 +15,7 @@ public:
 	std::vector<Edge> allEdges; //wszystkie krawędzie
     sf::Font * font;
     bool isDirected, isWeighted;
-
+    bool befAlgIsDirected;
 	float CenterGravityForce(float);
 	float VertexRepulsionForce(float);
 	float EdgeAttractionForce(float);
@@ -25,7 +25,7 @@ public:
 
     void CalculateRepulsionForceMidEdges(MidEdge &me1, MidEdge &me2);
 
-	void CalculateForces(const int width,const int height);
+	void CalculateForces(const int width,const int height,bool simulateForces);
 	void ApplyForces(const int width,const int height);
 
     void AddEdge(int,int,int,int);
@@ -39,7 +39,7 @@ public:
     void AddMiddlePointsToEdge(Edge &);
     float midPointRepulsionForce(sf::Vector2f, sf::Vector2f);
 
-	void Draw(sf::RenderTarget&,bool editLook);
+	void Draw(sf::RenderTarget&,bool editLook, bool editEdges);
     Graph( sf::Font *);
     Graph();
     Graph(Graph*);

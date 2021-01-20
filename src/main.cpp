@@ -30,10 +30,10 @@ int main()
             else if (j-i <= 10) p = 10;
             else p = 2;
             p*=2;
-            if (los(1,1000) <= p) app.G.AddEdge(i,j,0,0);
+            if (los(1,1000) <= p) app.G.AddEdge(i,j,los(0,10),0);
         }
     }
-    app.G.AddEdge(1,0,0,0);
+    app.G.AddEdge(1,0,(0,10),0);
     app.Run();
     return 0;
 }
