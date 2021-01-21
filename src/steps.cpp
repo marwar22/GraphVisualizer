@@ -65,7 +65,10 @@ void StepList::InitState(Step step){
     forwardSteps.push_back(step); 
 }
 
-void StepList::AddState(Step step){
+void StepList::AddState(Step step) {
+    if (step.edgesChanges.empty() && step.verticesChanges.empty()) 
+        return;
+    
     forwardSteps.push_back(step);
 }
 void StepList::AddBackwardsState(Step step){

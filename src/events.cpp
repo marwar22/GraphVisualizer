@@ -207,14 +207,18 @@ char Application::getCharFromInput(sf::Event &event){
 void Application::HandleTextEntered(sf::Event &event) {//j
     char letter = getCharFromInput(event);//SPRAWDZIC DZIALANIE ENTER'A NA WINDOWSIE, JEZELI CHCEMY WIDNOWSA TEZ
     if(aktualnyStan == saveFile || aktualnyStan == readFile) {
-        if(letter == 8) textEntered.pop_back();
-        else if(letter == 13) {
+        if(letter == 8) {
+            if (textEntered.size() ) textEntered.pop_back();
+        } else if(letter == 13) {
             if(aktualnyStan == saveFile)
-                WriteFile( textEntered.c_str(), &(G) );
+                WriteFile( ("savedGraphs/" + textEntered + ".gv").c_str(), &(G) );
             if(aktualnyStan == readFile)
-                ReadFile( textEntered.c_str(), &(G) ); 
+                ReadFile( ("savedGraphs/" + textEntered + ".gv").c_str(), &(G) ); 
+            aktualnyStan = nothing;
         }
-        else textEntered.push_back(letter);
+        else {
+            if (textEntered.size() < 20) textEntered.push_back(letter);
+        }
     }
 
     if (aktualnyStan == editE && selectedEdgeId != -1) {

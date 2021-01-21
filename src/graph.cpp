@@ -345,7 +345,7 @@ void Graph::Draw(sf::RenderTarget& window, bool editLook, bool editEdges){
 
 
 
-    //Debug
+    /*//Debug
     sf::CircleShape shape2(5.f,100);
     shape2.setFillColor(sf::Color(200,0,0,100));
     shape2.setOrigin(sf::Vector2f(shape2.getGlobalBounds().width/2,shape2.getGlobalBounds().height/2));
@@ -363,5 +363,5 @@ void Graph::Draw(sf::RenderTarget& window, bool editLook, bool editEdges){
     window.draw(shape2);
 
     shape2.setPosition(dbg2);
-    window.draw(shape2);
+    window.draw(shape2);*/
 }

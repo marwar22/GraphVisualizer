@@ -25,6 +25,8 @@ const int BUTTON_SPACING     = 20;
 const int BUTTON_HEIGHT      = 45;
 const long double BUTTON_FONT_SCALE = 0.85;
 const long double BUTTON_SCALE_DELTA = 0.002;
+const int INPUT_HEIGHT     = 40;
+const int INPUT_WIDTH     = 400;
 
 void PrintGraphLog(Graph &G);
 

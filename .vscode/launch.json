@@ -8,7 +8,7 @@
             "name": "(gdb) Launch",
             "type": "cppdbg",
             "request": "launch",
-            "program": "${workspaceFolder}/ProjektProgram",
+            "program": "${workspaceFolder}/GraphVisualizer",
             "args": [],
             "stopAtEntry": false,
             "cwd": "${workspaceFolder}",

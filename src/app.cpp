@@ -14,7 +14,7 @@
 #include "algorithms/algorithms.hpp"
 
 #include <cassert>
-#define assertm(exp, msg) assert(((void)msg, exp))
+#define assertm(exp, msg) assert(((void)msg, exp)) 
 void *sG;
 
 std::mt19937 rnd2(1234);
@@ -145,10 +145,16 @@ void ButtonRunMST(Application       &app,Button &thisButton,sf::Event &event) {
     app.algorithmId = 5;
 }
 
-void ButtonRunColors(Application    &app,Button &thisButton,sf::Event &event) {
+void ButtonRunIsBipartial(Application       &app,Button &thisButton,sf::Event &event) {
     app.stepLista.ClearStates();
     ChooseVertexInit(app);
     app.algorithmId = 6;
+}
+
+void ButtonRunColors(Application    &app,Button &thisButton,sf::Event &event) {
+    app.stepLista.ClearStates();
+    ChooseVertexInit(app);
+    app.algorithmId = 7;
 }
 
 void ButtonGraphDirected(Application    &app,Button &thisButton,sf::Event &event) {
@@ -182,7 +188,7 @@ Application::Application()
     
     runningForward = false;
     runningBack = false;
-    timeStep = (1.f/64.f); //czas
+    timeStep = (1.f/16.f); //czas
     lastStep = 0;
     
     selectedEdgeId = -1;
@@ -216,39 +222,42 @@ Application::Application()
     buttonsAlg.push_back(Button(50,24,50,45,"BFS", &font,ButtonRunBFS));
     
     algorithms.push_back(DIJKSTRA);   
-    buttonsAlg.push_back(Button(50,24,50,45,"Dijkstra", &font,ButtonRunDIJKSTRA));
+    buttonsAlg.push_back(Button(50,24,85,45,"Dijkstra", &font,ButtonRunDIJKSTRA));
 
     algorithms.push_back(SCC);   
     buttonsAlg.push_back(Button(50,24,50,45,"SCC", &font,ButtonRunSCC));
 
 
     algorithms.push_back(POSTORDER);   
-    buttonsAlg.push_back(Button(50,24,50,45,"POSTORDER", &font,ButtonRunPostorder));
+    buttonsAlg.push_back(Button(50,24,120,45,"POSTORDER", &font,ButtonRunPostorder));
 
     algorithms.push_back(MST);   
     buttonsAlg.push_back(Button(50,24,50,45,"MST", &font,ButtonRunMST));
 
+    algorithms.push_back(BIPARTIAL_CHECK);
+    buttonsAlg.push_back(Button(50,24,120,45,"Dwudzielny?", &font,ButtonRunIsBipartial));
+
 
     algorithms.push_back(ColorsAlgorithm);
-    buttonsAlg.push_back(Button(190,24,80,45,"Kolory",&font,ButtonRunColors));
+    buttonsAlg.push_back(Button(190,24,100,45,"Kolory",&font,ButtonRunColors));
 
-    buttonsAlg.push_back(Button(190,24,150,45, textReturn, &font,ButtonReturnToGraphEdit));
+    buttonsAlg.push_back(Button(190,24,85,45, textReturn, &font,ButtonReturnToGraphEdit));
 
     
     buttonsAlgR.push_back(Button(30,24,50,45,"<",                &font,PlayBackAlgorithm));
     buttonsAlgR.push_back(Button(100,24,50,45,"||",              &font,StopPlayingAlgorithm));
     buttonsAlgR.push_back(Button(170,24,50,45,">",               &font,PlayAlgorithm));
-    buttonsAlgR.push_back(Button(240,24,50,45,"->",              &font,ButtonStepRight));
     buttonsAlgR.push_back(Button(310,24,50,45,"<-",              &font,ButtonStepLeft));
-    buttonsAlgR.push_back(Button(380,24,150,45, textReturn,      &font,ButtonReturnToAlgChoose));
+    buttonsAlgR.push_back(Button(240,24,50,45,"->",              &font,ButtonStepRight));
+    buttonsAlgR.push_back(Button(380,24,85,45, textReturn,      &font,ButtonReturnToAlgChoose));
     buttonsAlgR.push_back(Button(550,24,50,45,"-",               &font,ButtonDecreaseAlgSpeed));
     //textBoxAlgR.push_back(TextBox(620,24,50,45,"x1",             &font));
     buttonsAlgR.push_back(Button(690,24,50,45,"+",               &font,ButtonIncreaseAlgSpeed));
     buttonsAlgR.push_back(Button(690,24,60,45,"",                &font,ButtonNothing));
     buttonsAlgR[8].ifThisIsTextBox = true;
 
-    buttonsChooseVertex.push_back(Button(190,24,150,45, textReturn, &font,ButtonReturnToAlgChoose));
-
+    buttonsChooseVertex.push_back(Button(190,24,85,45, textReturn, &font,ButtonReturnToAlgChoose));
+/*
     for (int i = 1; i< buttons.size();++i) {
         buttons[i].x = buttons[i-1].x + buttons[i-1].width + BUTTON_SPACING;
         buttons[i].Relocate();
@@ -256,7 +265,7 @@ Application::Application()
     for (int i = 1; i< buttonsAlg.size();++i) {
         buttonsAlg[i].x = buttonsAlg[i-1].x + buttonsAlg[i-1].width + BUTTON_SPACING;
         buttonsAlg[i].Relocate();
-    }
+    }*/
 
     window.create(sf::VideoMode(1920, 1080), "Projekt PWI",sf::Style::Default,settings);
     window.setFramerateLimit(100);
@@ -329,13 +338,15 @@ void Application::Run() {
 
 void Application::Render() {
     sf::Vector2i mousePosition = sf::Mouse::getPosition(window);
-    buttons[0].text.setString(std::to_string(mousePosition.x) + " " + std::to_string(mousePosition.y));
+    //buttons[0].text.setString(std::to_string(mousePosition.x) + " " + std::to_string(mousePosition.y));
     //buttons[1].text.setString(std::to_string(window.getSize().x));
     //buttons[2].text.setString(std::to_string(aktualnyStan));
     //buttons[3].text.setString(std::to_string(GraphArea.getMaximumAntialiasingLevel()));
     window.clear(sf::Color::White);        
     RenderGraphArea();
     RenderToolBar();
+    if( aktualnyStan == readFile || aktualnyStan == saveFile )
+        RenderTextTyping();
     window.display();
 }
 
@@ -367,7 +378,6 @@ int TotalLength( std::vector<Button>* buttonsv )
 
 void SetPositionsForButtons( std::vector<Button>* buttonsv, Application* app )
 {
-    //TOOLBAR_HEIGHT = 110;
     long double scale, xdb, ydb, btspdb, hdb, ldb, scalenxt;
     int l;
     scale = 1;
@@ -563,9 +573,34 @@ void Application::RenderToolBar() {
     sf::Sprite toolBarSprite;
     toolBarSprite.setTexture(toolBar.getTexture());
     toolBarSprite.setPosition(0,0);
-    window.draw(toolBarSprite);    
+    window.draw(toolBarSprite);   
 }
 
 
-void Application::RenderFileNameTyping() {
+void Application::RenderTextTyping() {
+    sf::ContextSettings settings;
+    settings.antialiasingLevel = 8;
+    sf::Text inputboxtext;
+    inputboxtext.setFont(font);
+    inputboxtext.setString(textEntered);
+    inputboxtext.setCharacterSize(20);
+    inputboxtext.setFillColor(sf::Color(1,1,1));
+    inputboxtext.setOrigin(sf::Vector2f(inputboxtext.getGlobalBounds().width/2,0));
+    inputboxtext.setPosition(INPUT_WIDTH/2,INPUT_HEIGHT/2-13);
+    
+    sf::RenderTexture inputbox;
+    inputbox.create(INPUT_WIDTH,INPUT_HEIGHT,settings);
+    inputbox.clear(sf::Color(240, 240, 240));
+
+    sf::RectangleShape shape(sf::Vector2f(inputbox.getSize().x,TOOLBAR_HEIGHT));
+    shape.setFillColor(sf::Color(200,200,200));
+    shape.setOutlineColor(sf::Color(1,1,1));
+    inputbox.draw(shape);
+    inputbox.draw(inputboxtext);
+    
+    inputbox.display();
+    sf::Sprite inputboxsprite;
+    inputboxsprite.setTexture(inputbox.getTexture());
+    inputboxsprite.setPosition(window.getSize().x/2-INPUT_WIDTH/2,window.getSize().y/2-INPUT_HEIGHT/2);
+    window.draw(inputboxsprite);
 }

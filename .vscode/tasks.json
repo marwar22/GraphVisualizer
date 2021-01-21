@@ -11,7 +11,7 @@
 				"src/graphics/*.cpp",
 				"src/algorithms/*.cpp",
 				"-o",
-				"ProjektProgram",
+				"GraphVisualizer",
 				"-lsfml-graphics",
 				"-lsfml-window",
 				"-lsfml-system",			

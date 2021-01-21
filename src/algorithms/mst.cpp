@@ -13,7 +13,6 @@
 
 void MST(Graph *G,StepList *StepListPtr, std::vector<int> &chosenV) {    
     G->isDirected = 0;
-    std::cerr<<" JESTEM W MST!!!!!!"<<"\n";
 
     Graph GKopia(G);
     std::vector<VertexChange> initVerticesChanges;
