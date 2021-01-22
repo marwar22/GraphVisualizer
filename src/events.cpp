@@ -12,34 +12,33 @@
 #include "utils.hpp"
 #include "filehandle.hpp"
 
-extern void *sG;
 void Application::HandleMouseButtonPressed(sf::Event &event) {
     switch( aktualnyStan )
     {
         case algorithmC:
             for (Button &button : buttonsAlg) {
-                if (button.rectangle.getGlobalBounds().contains(event.mouseButton.x,event.mouseButton.y) ) {//czy myszka jest w prostokacie przycisku                    
+                if (button.rectangle.getGlobalBounds().contains(event.mouseButton.x,event.mouseButton.y) ) {                    
                     button.OnClick(*this,button,event);           
                 }
             }
             break;
         case algorithmR:
             for (Button &button : buttonsAlgR) {
-                if (button.rectangle.getGlobalBounds().contains(event.mouseButton.x,event.mouseButton.y) ) {//czy myszka jest w prostokacie przycisku
+                if (button.rectangle.getGlobalBounds().contains(event.mouseButton.x,event.mouseButton.y) ) {
                     button.OnClick(*this,button,event);           
                 }
             }
             break;
         case chooseVertex:
             for (Button &button : buttonsChooseVertex) {
-                if (button.rectangle.getGlobalBounds().contains(event.mouseButton.x,event.mouseButton.y) ) {//czy myszka jest w prostokacie przycisku
+                if (button.rectangle.getGlobalBounds().contains(event.mouseButton.x,event.mouseButton.y) ) {
                     button.OnClick(*this,button,event);           
                 }
             }
             break;
         default:
             for (Button &button : buttons) {
-                if (button.rectangle.getGlobalBounds().contains(event.mouseButton.x,event.mouseButton.y) ) {//czy myszka jest w prostokacie przycisku
+                if (button.rectangle.getGlobalBounds().contains(event.mouseButton.x,event.mouseButton.y) ) {
                     button.OnClick(*this,button,event);
                     ClearSelected();      
                     holdingVertexId = -1;
@@ -55,7 +54,6 @@ void Application::HandleMouseButtonPressed(sf::Event &event) {
                 int dx = v.position.x - event.mouseButton.x;
                 int dy = v.position.y - (event.mouseButton.y - TOOLBAR_HEIGHT);
                 if (sqrt(dx*dx+dy*dy) <= V_RADIUS) {
-                    //v.SetColor(sf::Color::Yellow);
                     holdingVertexId = v.id;
                     v.isBeingChosen = true;
                     break;
@@ -105,7 +103,6 @@ void Application::HandleMouseButtonPressed(sf::Event &event) {
                         v.isBeingChosen = true;
                     }else if( secondVertexId == -1 ) {
                         secondVertexId = v.id;
-                        //tu był if isWeighted
                         G.AddEdge( firstVertexId, secondVertexId, 0, 0 );                    
                         G.vertices [ firstVertexId ].isBeingChosen = false;
                         firstVertexId = -1;
@@ -125,40 +122,13 @@ void Application::HandleMouseButtonPressed(sf::Event &event) {
                 e.isHighlighted = false;
                 if (sqrt(dx*dx+dy*dy) <= V_DATA_RADIUS) {
                     selectedEdgeId = e.id; 
-                    std::cerr<<"nowy isHighlighted: "<<e.id<<"\n";
                     e.isHighlighted = true;
+                    break;
                 }
             }
         }
             break;
         case removeE:
-            /*for (Vertex &v: G.vertices) {            
-                int dx = v.position.x - event.mouseButton.x;
-                int dy = v.position.y - (event.mouseButton.y - TOOLBAR_HEIGHT);
-                if (sqrt(dx*dx+dy*dy) <= V_RADIUS) {
-                    if( firstVertexId == -1 ) {
-                        firstVertexId = v.id;
-                        v.isBeingChosen = true;
-                    }else if( secondVertexId == -1) {
-                        secondVertexId = v.id;
-                        for(Edge &e: G.allEdges ) {
-                            if( e.idVertexFrom == firstVertexId && e.idVertexTo == secondVertexId ) {
-                                G.RemoveEdge( e.id );
-                                break;
-                            }
-                            if( e.idVertexFrom == secondVertexId && e.idVertexTo == firstVertexId ) {
-                                G.RemoveEdge( e.id );
-                                break;
-                            }
-                        }
-                        G.vertices [ firstVertexId ].isBeingChosen = false;
-                        
-                        firstVertexId = -1;
-                        secondVertexId = -1;
-                    }
-                    break;
-                }
-            }*/
             for (Edge &e: G.allEdges) {
                 int dx = e.dataPoint.x - event.mouseButton.x;
                 int dy = e.dataPoint.y - (event.mouseButton.y - TOOLBAR_HEIGHT);
@@ -170,18 +140,17 @@ void Application::HandleMouseButtonPressed(sf::Event &event) {
             }
             break;
     }
-
-    std::cerr<<"\n\n\nlog po wykonaniu Pressed:"<<std::endl;
-    PrintGraphLog(G);
+    #if DEBUG
+        PrintGraphLog(G);
+    #endif
+        
 }
 
 void Application::HandleMouseButtonReleased(sf::Event &event) {
-    
     switch( aktualnyStan )
     {
         case movingV:      
             if (holdingVertexId != -1) {        
-                //G.vertices[holdingVertexId].SetColor(sf::Color::Red);
                 G.vertices[holdingVertexId].isBeingChosen = false;
                 holdingVertexId = -1;
             }
@@ -204,16 +173,20 @@ char Application::getCharFromInput(sf::Event &event){
     return static_cast<char>(event.text.unicode);
 }
 
-void Application::HandleTextEntered(sf::Event &event) {//j
-    char letter = getCharFromInput(event);//SPRAWDZIC DZIALANIE ENTER'A NA WINDOWSIE, JEZELI CHCEMY WIDNOWSA TEZ
-    if(aktualnyStan == saveFile || aktualnyStan == readFile) {
+void Application::HandleTextEntered(sf::Event &event) {
+    char letter = getCharFromInput(event);
+    if(aktualnyStan == saveFile || aktualnyStan == readFile) {        
         if(letter == 8) {
             if (textEntered.size() ) textEntered.pop_back();
         } else if(letter == 13) {
+            if (textEntered.size() <= 3 || textEntered.substr(textEntered.size() - 3, 3) != ".gv") {
+                textEntered += ".gv";
+            }
+
             if(aktualnyStan == saveFile)
-                WriteFile( ("savedGraphs/" + textEntered + ".gv").c_str(), &(G) );
+                WriteFile( ("savedGraphs/" + textEntered).c_str(), &(G) );
             if(aktualnyStan == readFile)
-                ReadFile( ("savedGraphs/" + textEntered + ".gv").c_str(), &(G) ); 
+                ReadFile( ("savedGraphs/" + textEntered).c_str(), &(G) ); 
             aktualnyStan = nothing;
         }
         else {
@@ -222,18 +195,9 @@ void Application::HandleTextEntered(sf::Event &event) {//j
     }
 
     if (aktualnyStan == editE && selectedEdgeId != -1) {
-        if     ((int)letter == 45) {G.allEdges[selectedEdgeId].weight1 *= (-1);} // zmiana znaku
-        else if((int)letter == 13) {
-            // selectedEdgeId
-            // selectedEdgeId = -1;
-            ClearSelected();
-            // G.vertices[firstVertexId].isBeingChosen = false;
-            // G.vertices[secondVertexId].isBeingChosen = false;
-
-            // firstVertexId = -1; 
-            // secondVertexId = -1;
-        } //enter
-        else if((int)letter == 8) {G.allEdges[selectedEdgeId].weight1 /= 10;} //backspace
+        if     ((int)letter == 45) {G.allEdges[selectedEdgeId].weight1 *= (-1);}
+        else if((int)letter == 13) {ClearSelected();} // Enter
+        else if((int)letter == 8) {G.allEdges[selectedEdgeId].weight1 /= 10;} // Backspace
         else if(G.allEdges[selectedEdgeId].weight1 <= (INT_MAX - 100) / 10 && int(letter) - 48 >= 0 && int(letter) - 48 <= 9){
                 G.allEdges[selectedEdgeId].weight1 = G.allEdges[selectedEdgeId].weight1 * 10 + (int(letter) - 48);
         }
@@ -246,7 +210,6 @@ void Application::HandleEvent(sf::Event &event) {
     if (event.type == sf::Event::MouseButtonReleased) HandleMouseButtonReleased(event);
     if (event.type == sf::Event::MouseMoved)          HandleMouseMoved(event);
     if (event.type == sf::Event::Resized) {
-        // update the view to the new size of the window
         sf::FloatRect visibleArea(0, 0, event.size.width, event.size.height);
         window.setView(sf::View(visibleArea));
         simulateForces = true;

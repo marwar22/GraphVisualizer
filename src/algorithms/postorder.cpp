@@ -15,15 +15,14 @@ void dfs_postorder(Graph &G, StepList* POSTStepList, int v) {
     G.vertices[v].data1 = 1;
     G.vertices[v].color = sf::Color(41, 230, 230);
 
-    ///////////////////////
     std::vector<VertexChange> verticesChanges;
-    std::vector<EdgeChange> edgesChanges; // docelowo pusty
+    std::vector<EdgeChange> edgesChanges; 
 
     verticesChanges.push_back(VertexChange(G.vertices[v]));
     POSTStepList->AddState(Step(verticesChanges,edgesChanges));
     verticesChanges.clear();
     edgesChanges.clear();
-    ////////////////////////
+
     if(G.isDirected == 0) {
         for(auto id: G.vertices[v].edgesIdFrom){ 
             if(G.vertices[G.allEdges[id].idVertexFrom].data1 == 0) 
@@ -49,7 +48,7 @@ void POSTORDER(Graph *G,StepList *StepListPtr, std::vector<int>  &chosenV) {
     for (Vertex &v: GKopia.vertices) {
         v.data1 = 0;
         v.data2 = 0;
-        v.color = sf::Color::Magenta;//dlaczego
+        v.color = sf::Color::Magenta;
         VertexChange singleChange = VertexChange(v);
         initVerticesChanges.push_back(singleChange);
     }
@@ -57,8 +56,4 @@ void POSTORDER(Graph *G,StepList *StepListPtr, std::vector<int>  &chosenV) {
     StepListPtr->InitState(initStep);
  
     dfs_postorder(GKopia, StepListPtr,chosenV[0]);
-
 }
-
-
-

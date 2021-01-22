@@ -46,8 +46,8 @@ Step::Step(std::vector<VertexChange> __verticesChanges, std::vector<EdgeChange> 
 StepList& StepList::operator=(const StepList &__stepList) 
 {
     G = __stepList.G;
-    forwardSteps  = std::vector<Step>(__stepList.forwardSteps); // kończy się na pustym (ew.)        
-    backwardSteps = std::vector<Step>(__stepList.backwardSteps); // zaczyna się od pustego           
+    forwardSteps  = std::vector<Step>(__stepList.forwardSteps);       
+    backwardSteps = std::vector<Step>(__stepList.backwardSteps);         
     currentStep = __stepList.currentStep;
     maxStepEver= __stepList.maxStepEver; 
 
@@ -76,13 +76,6 @@ void StepList::AddBackwardsState(Step step){
         vc.data1 = G->vertices[vc.id].data1;       
         vc.data2 = G->vertices[vc.id].data2;         
         vc.color = G->vertices[vc.id].color;       
-        if (vc.color == sf::Color::Red)
-            std::cerr<< "backstep: Red\n";
-
-        if (vc.color == sf::Color::Green)
-            std::cerr<< "backstep: Green\n";      
-        if (vc.color == sf::Color::Cyan)
-            std::cerr<< "backstep: Cyan\n";
     }
 
     for (EdgeChange &ec: step.edgesChanges) {
@@ -109,12 +102,11 @@ void StepList::GoLeft() {
         G->allEdges[ec.id].weight2 = ec.weight2;
         G->allEdges[ec.id].color = ec.color;
         G->allEdges[ec.id].isHighlighted = ec.isHighlighted;
-
     }
 }
 
 void StepList::GoRight() {
-    if(currentStep + 1 >= forwardSteps.size()) //   cs = -1 0FStep cs = 0 1FStep cs=1 2FStep 3FStep 4FStep cs = 4;
+    if(currentStep + 1 >= forwardSteps.size()) 
         return;                                
     ++currentStep;
     if (currentStep > maxStepEver) {

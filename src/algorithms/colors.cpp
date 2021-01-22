@@ -9,30 +9,25 @@
 #include "../steps.hpp"
 #include "../utils.hpp"
 
+std::mt19937 rndColor(123);
+int losColor(int mi,int mx) {return rndColor()%(mx-mi+1)+mi;}
+
 void ColorsAlgorithm(Graph *G,StepList *StepListPtr, std::vector<int> &chosenV) {  
     //StepList colorStepList = StepList(G);
-
+    
+    
+    
     std::vector<VertexChange> firstVerticesChanges;
-    std::vector<EdgeChange> firstEdgesChanges; // docelowo pusty
+    std::vector<EdgeChange> firstEdgesChanges; 
 
-    VertexChange onlyChange = VertexChange(0, 100, 100, sf::Color::Green);
-    firstVerticesChanges.push_back(onlyChange);
-    Step firstStep = Step(firstVerticesChanges,firstEdgesChanges); 
+    StepListPtr->InitState(Step(firstVerticesChanges,firstEdgesChanges));
 
-    StepListPtr->InitState(firstStep);
-    //onlyChange.color = 
-    //G->vertices[0].color = sf::Color::Cyan;
-    firstVerticesChanges[0].color = sf::Color::Cyan;
-    Step secondStep = Step(firstVerticesChanges,firstEdgesChanges); 
-    StepListPtr->AddState(secondStep);
-    //return colorStepList;
+    for (int i = 0; i < 1000; ++i) {      
+        firstVerticesChanges.clear();
+        for (Vertex v: G->vertices) {
+            VertexChange vChange = VertexChange(v.id, 0, 0, sf::Color((uint)losColor(0,255),(uint)losColor(0,255),(uint)losColor(0,255),(uint)255));
+            firstVerticesChanges.push_back(vChange);
+        }
+        StepListPtr->InitState(Step(firstVerticesChanges,firstEdgesChanges));
+    }       
 }
-
-/*
-    vector<FunkcjaAlgorytmy> algorithms;
-    listaKrokow = ColorsAlgorithms(nasz_graf_z_ekranu)
-
-
-*/
-
-

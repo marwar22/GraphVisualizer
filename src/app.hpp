@@ -13,12 +13,9 @@
 enum stan {
         addV, removeV, 
         addE, editE, removeE, 
-        movingV,
-        algorithmC,
-        algorithmR,
-        readFile,
-        saveFile,
-        chooseVertex,
+        movingV, algorithmC,
+        algorithmR, readFile,
+        saveFile, chooseVertex,
         nothing
 };
 
@@ -37,7 +34,7 @@ public:
     std::vector<TextBox> textBoxAlgR;
 
     std::vector<int> chosenVertices;
-    stan aktualnyStan;//wszystkie stany
+    stan aktualnyStan;
     int holdingVertexId;
     int firstVertexId, secondVertexId;
     int selectedEdgeId;

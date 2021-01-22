@@ -17,7 +17,7 @@ void BFS(Graph *G,StepList *StepListPtr, std::vector<int> &chosenV) {
     for (Vertex &v: GKopia.vertices) {
         v.data1 = 0;
         v.data2 = 0;
-        v.color = sf::Color::Magenta;//dlaczego
+        v.color = sf::Color::Magenta;
         VertexChange singleChange = VertexChange(v);
         initVerticesChanges.push_back(singleChange);
     }

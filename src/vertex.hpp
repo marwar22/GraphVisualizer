@@ -13,13 +13,12 @@ typedef std::vector<std::pair<int, int> > VII;
 class Vertex{
 public:
 	int id;
+	int data1, data2;
 
     std::vector<int> edgesIdFrom;
     std::vector<int> edgesIdTo;
     
-	int data1, data2;
-
-    sf::Text text1;//sam numer wierzcholka
+    sf::Text text1;
 	sf::Text subText;
 	sf::Text subText2;
 	
@@ -28,7 +27,6 @@ public:
     sf::Color color;
 
 	bool isBeingChosen;
-
     void SetColor(sf::Color);
 
 	Vertex();

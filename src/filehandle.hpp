@@ -10,5 +10,4 @@ int ReadInt(std::ifstream* ff);
 void ReadFile( const char * name, Graph * G );
 void WriteFile(const char* name, Graph* G);
 
-
 #endif

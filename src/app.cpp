@@ -13,17 +13,9 @@
 #include "utils.hpp"
 #include "algorithms/algorithms.hpp"
 
-#include <cassert>
-#define assertm(exp, msg) assert(((void)msg, exp)) 
-void *sG;
-
 std::mt19937 rnd2(1234);
 int los0(int mi,int mx) {return rnd2()%(mx-mi+1)+mi;}
 
-/*void Test(Application &app,Button &thisButton,sf::Event &event) {
-    std::cout<<"test\n"<<std::endl;
-    return;
-}*/
 void ChooseVertexInit(Application &app)
 {
     app.aktualnyStan = chooseVertex;
@@ -139,7 +131,6 @@ void ButtonRunPostorder(Application &app,Button &thisButton,sf::Event &event) {
 }
 
 void ButtonRunMST(Application       &app,Button &thisButton,sf::Event &event) {
-    std::cerr<<"NACISKAM BUTTON MST!!!"<<"\n";
     app.stepLista.ClearStates();
     ChooseVertexInit(app);
     app.algorithmId = 5;
@@ -153,8 +144,9 @@ void ButtonRunIsBipartial(Application       &app,Button &thisButton,sf::Event &e
 
 void ButtonRunColors(Application    &app,Button &thisButton,sf::Event &event) {
     app.stepLista.ClearStates();
-    ChooseVertexInit(app);
+    app.aktualnyStan = algorithmR;
     app.algorithmId = 7;
+    app.algorithms[app.algorithmId](&(app.G),&(app.stepLista),app.chosenVertices);
 }
 
 void ButtonGraphDirected(Application    &app,Button &thisButton,sf::Event &event) {
@@ -162,12 +154,13 @@ void ButtonGraphDirected(Application    &app,Button &thisButton,sf::Event &event
 }
 
 void ButtonNothing(Application &app,Button &thisButton,sf::Event &event){}
-//void SetTextToMousePosition(Application &app,Button &thisButton,sf::Event &event) {   
-//    thisButton.text.setString(std::to_string(event.mouseButton.x) + "x "+ std::to_string(event.mouseButton.y)+ "y");}
+
 void ButtonIncreaseAlgSpeed(Application    &app,Button &thisButton,sf::Event &event) {
+    if (app.timeStep < 1.f/2047.f) return;
     app.timeStep /= 2; 
 }
 void ButtonDecreaseAlgSpeed(Application    &app,Button &thisButton,sf::Event &event) {
+    if (app.timeStep > 4.1f) return;
     app.timeStep *= 2; 
 }
 Application::Application()
@@ -177,7 +170,6 @@ Application::Application()
    
     G = Graph(&font);
     stepLista = StepList(&G);
-    sG = &G;
     aktualnyStan    = addV;
     firstVertexId   = -1;
     secondVertexId  = -1;    
@@ -188,7 +180,7 @@ Application::Application()
     
     runningForward = false;
     runningBack = false;
-    timeStep = (1.f/16.f); //czas
+    timeStep = (1.f/16.f); 
     lastStep = 0;
     
     selectedEdgeId = -1;
@@ -210,7 +202,6 @@ Application::Application()
     buttons.push_back(Button(900,24,145,45,textForceSimulation,  &font,ButtonSimulate));
     buttons.push_back(Button(1050,24,145,45,"Odczyt z pliku",    &font,ButtonReadFile));
     buttons.push_back(Button(1200,24,145,45,"Zapis do pliku",    &font,ButtonSaveFile));
-    //buttons.push_back(Button(1350,24,150,45,"Koordy",            &font,SetTextToMousePosition));
     buttons.push_back(Button(1350,24,150,45,textMoveVertex,      &font,ButtonMoveVertex));
     buttons.push_back(Button(1350,24,150,45,"Graf skierowany",      &font,ButtonGraphDirected));
     buttons.push_back(Button(1350,24,150,45,"Wybierz\nAlgorytm", &font,ButtonAlgorithm));
@@ -227,7 +218,6 @@ Application::Application()
     algorithms.push_back(SCC);   
     buttonsAlg.push_back(Button(50,24,50,45,"SCC", &font,ButtonRunSCC));
 
-
     algorithms.push_back(POSTORDER);   
     buttonsAlg.push_back(Button(50,24,120,45,"POSTORDER", &font,ButtonRunPostorder));
 
@@ -237,12 +227,10 @@ Application::Application()
     algorithms.push_back(BIPARTIAL_CHECK);
     buttonsAlg.push_back(Button(50,24,120,45,"Dwudzielny?", &font,ButtonRunIsBipartial));
 
-
     algorithms.push_back(ColorsAlgorithm);
     buttonsAlg.push_back(Button(190,24,100,45,"Kolory",&font,ButtonRunColors));
 
     buttonsAlg.push_back(Button(190,24,85,45, textReturn, &font,ButtonReturnToGraphEdit));
-
     
     buttonsAlgR.push_back(Button(30,24,50,45,"<",                &font,PlayBackAlgorithm));
     buttonsAlgR.push_back(Button(100,24,50,45,"||",              &font,StopPlayingAlgorithm));
@@ -251,21 +239,11 @@ Application::Application()
     buttonsAlgR.push_back(Button(240,24,50,45,"->",              &font,ButtonStepRight));
     buttonsAlgR.push_back(Button(380,24,85,45, textReturn,      &font,ButtonReturnToAlgChoose));
     buttonsAlgR.push_back(Button(550,24,50,45,"-",               &font,ButtonDecreaseAlgSpeed));
-    //textBoxAlgR.push_back(TextBox(620,24,50,45,"x1",             &font));
     buttonsAlgR.push_back(Button(690,24,50,45,"+",               &font,ButtonIncreaseAlgSpeed));
     buttonsAlgR.push_back(Button(690,24,60,45,"",                &font,ButtonNothing));
     buttonsAlgR[8].ifThisIsTextBox = true;
 
     buttonsChooseVertex.push_back(Button(190,24,85,45, textReturn, &font,ButtonReturnToAlgChoose));
-/*
-    for (int i = 1; i< buttons.size();++i) {
-        buttons[i].x = buttons[i-1].x + buttons[i-1].width + BUTTON_SPACING;
-        buttons[i].Relocate();
-    }
-    for (int i = 1; i< buttonsAlg.size();++i) {
-        buttonsAlg[i].x = buttonsAlg[i-1].x + buttonsAlg[i-1].width + BUTTON_SPACING;
-        buttonsAlg[i].Relocate();
-    }*/
 
     window.create(sf::VideoMode(1920, 1080), "Projekt PWI",sf::Style::Default,settings);
     window.setFramerateLimit(100);
@@ -295,9 +273,11 @@ void Application::CheckPodswietlenie(sf::Vector2i mousePosition) {
 }
 
 void Application::Run() {    
-    for(Vertex v2: G.vertices) {std::cerr<<"V: "<<v2.id<<std::endl;}    
-    std::cerr<<"edges:"<<std::endl;
-    for(Edge e2:G.allEdges) {std::cerr<<"E: "<<e2.id<<" "<<e2.idVertexFrom<<", "<<e2.idVertexTo<<std::endl;}
+    #ifdef DEBUG
+        for(Vertex v2: G.vertices) {std::cerr<<"V: "<<v2.id<<std::endl;}    
+        std::cerr<<"edges:"<<std::endl;
+        for(Edge e2:G.allEdges) {std::cerr<<"E: "<<e2.id<<" "<<e2.idVertexFrom<<", "<<e2.idVertexTo<<std::endl;}
+    #endif
 
     while (window.isOpen())
     {
@@ -305,16 +285,9 @@ void Application::Run() {
         while (window.pollEvent(event)) {HandleEvent(event);}
 
         sf::Vector2i mousePosition = sf::Mouse::getPosition(window);
-       
-        //if(simulateForces)
-        //{
         G.CalculateForces(window.getSize().x,window.getSize().y-TOOLBAR_HEIGHT,simulateForces);
         G.ApplyForces(window.getSize().x,window.getSize().y-TOOLBAR_HEIGHT);
-        /*} else {
-            for (Vertex &v: G.vertices) {
-                v.KeepInGraphArea(window.getSize().x,window.getSize().y-TOOLBAR_HEIGHT);
-            }
-        }*/
+        
         if(runningForward && aktualnyStan == algorithmR){
             long double tt= clock();
             tt /= CLOCKS_PER_SEC;
@@ -338,10 +311,7 @@ void Application::Run() {
 
 void Application::Render() {
     sf::Vector2i mousePosition = sf::Mouse::getPosition(window);
-    //buttons[0].text.setString(std::to_string(mousePosition.x) + " " + std::to_string(mousePosition.y));
-    //buttons[1].text.setString(std::to_string(window.getSize().x));
-    //buttons[2].text.setString(std::to_string(aktualnyStan));
-    //buttons[3].text.setString(std::to_string(GraphArea.getMaximumAntialiasingLevel()));
+    
     window.clear(sf::Color::White);        
     RenderGraphArea();
     RenderToolBar();
@@ -374,7 +344,6 @@ int TotalLength( std::vector<Button>* buttonsv )
     if(buttonsv->size() > 0) totalLength += BUTTON_SPACING;
     return totalLength;
 }
-
 
 void SetPositionsForButtons( std::vector<Button>* buttonsv, Application* app )
 {
@@ -543,25 +512,24 @@ void Application::RenderToolBar() {
                 buttonsAlg[i].draw(toolBar);
             }
             break;
+
         case algorithmR:
-            stringStream << std::fixed << std::setprecision(3) << std::round(1000/timeStep)/1000;
+            stringStream << std::fixed << std::setprecision(3) << std::round(1000/timeStep)/16000;
             stringSpeed = stringStream.str();
             buttonsAlgR[8].text.setString(stringSpeed);
             SetPositionsForButtons( &buttonsAlgR, this );
             for (int i=0; i<buttonsAlgR.size(); ++i) {
                 buttonsAlgR[i].draw(toolBar);
             }
-            /*
-            for (TextBox &tb :textBoxAlgR) {
-                tb.Draw(toolBar);
-            }*/
             break;
+
         case chooseVertex:
             SetPositionsForButtons( &buttonsChooseVertex, this );
             for (int i=0; i<buttonsChooseVertex.size(); ++i) {
                 buttonsChooseVertex[i].draw(toolBar);
             }
             break;
+
         default:
             SetPositionsForButtons( &buttons, this );
             for (int i=0; i<buttons.size(); ++i) {
@@ -575,7 +543,6 @@ void Application::RenderToolBar() {
     toolBarSprite.setPosition(0,0);
     window.draw(toolBarSprite);   
 }
-
 
 void Application::RenderTextTyping() {
     sf::ContextSettings settings;

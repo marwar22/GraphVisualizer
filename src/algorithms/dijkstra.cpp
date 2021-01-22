@@ -18,13 +18,11 @@ void DIJKSTRA(Graph *G,StepList *StepListPtr, std::vector<int> &chosenV) {
     for (Vertex &v: GKopia.vertices) {
         v.data1 = INF;
         v.data2 = 0;
-        v.color = sf::Color::Magenta;//dlaczego
+        v.color = sf::Color::Magenta;
         VertexChange singleChange = VertexChange(v);
         initVerticesChanges.push_back(singleChange);
     }
     
-
-    //std::queue<int> Q;
     std::priority_queue<std::pair<int,int>,std::vector<std::pair<int,int>>,std::greater<std::pair<int,int> > > Q;
     Q.push({0,chosenV[0]});
     GKopia.vertices[chosenV[0]].data1 = 0;
@@ -34,19 +32,18 @@ void DIJKSTRA(Graph *G,StepList *StepListPtr, std::vector<int> &chosenV) {
     std::vector<int> prvEdgesId;
     int prvVId = -1;
     int stepCounter = 0;
-    //std::vector<bool> vis(GKopia.vertices.size());
+
     while (!Q.empty()) {
         int v = Q.top().second;
         int distance = Q.top().first; 
         Q.pop();
-        std::cerr<<"jestem w v="<<v<<"\n";
-        if(GKopia.vertices[v].data1 < distance) continue;
+        if(GKopia.vertices[v].data1 < distance) 
+            continue;
         
-                    
-        //GKopia.vertices[v].subText.setString("vis");
         GKopia.vertices[v].color = sf::Color::Red;
         std::vector<VertexChange> nVerticesChanges;
         std::vector<EdgeChange> nEdgesChanges;
+
         while (prvEdgesId.size()) {
             GKopia.allEdges[prvEdgesId.back()].color = sf::Color::Black;
             nEdgesChanges.push_back(GKopia.allEdges[prvEdgesId.back()]);
@@ -75,7 +72,6 @@ void DIJKSTRA(Graph *G,StepList *StepListPtr, std::vector<int> &chosenV) {
                     GKopia.vertices[u].data1 = distance + GKopia.allEdges[id].weight1;
                     Q.push({GKopia.vertices[u].data1,u});
 
-                    //GKopia.vertices[u].subText.setString("vis");
                     GKopia.vertices[u].color = sf::Color::Green;
                     GKopia.allEdges[id].color = sf::Color::White;
                     
@@ -90,6 +86,7 @@ void DIJKSTRA(Graph *G,StepList *StepListPtr, std::vector<int> &chosenV) {
                 int u = GKopia.allEdges[id].idVertexTo;
                 GKopia.vertices[u].data1 = distance + GKopia.allEdges[id].weight1;
                 Q.push({GKopia.vertices[u].data1,u});
+
                 GKopia.vertices[u].subText.setString("vis");
                 GKopia.vertices[u].color = sf::Color::Green;
                 GKopia.allEdges[id].color = sf::Color::White;

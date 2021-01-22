@@ -11,8 +11,7 @@
 #define rep(i,a,b) for(int i = (int)a; i <= (int)b; i++)
 #define M_RAD 57.2957
 
-float GetAngleByCoordinates(float x, float y)//zwraca kat miedzy osia y+ zgodnie z ruchem wskazowek zegara do punku (x,y)
-{
+float GetAngleByCoordinates(float x, float y) {
     float angle = atan2(-y,-x);
     if (angle < 0) angle += 2*M_PI;
     return angle;
@@ -24,7 +23,7 @@ float GetAngleByPoints(sf::Vector2f v,sf::Vector2f w) {
     return GetAngleByCoordinates(x,y);
 }
 
-float getLength(sf::Vector2f p1, sf::Vector2f p2) {//odleglosc miedzy dwoma punktami w przestrzeni
+float getLength(sf::Vector2f p1, sf::Vector2f p2) {//odległość między dwoma punktami w przestrzeni
 	return sqrtf(pow(p1.x - p2.x, 2) + pow(p1.y - p2.y, 2));
 }
 
@@ -57,7 +56,7 @@ void Graph::CalculateRepulsionForceMidEdges(MidEdge &me1, MidEdge &me2){
 void Graph::CalculateForces(const int width,const int height,bool simulateForces) {
 
     for (Vertex &v:vertices) v.force = sf::Vector2f(0.f,0.f); //zerowanie sił wierzchołków
-    for (Edge   &e:allEdges) e.midEFrom.force = e.midETo.force = sf::Vector2f(0.f,0.f); //zerowanie sił mid krawędzi
+    for (Edge   &e:allEdges) e.midEFrom.force = e.midETo.force = sf::Vector2f(0.f,0.f); //zerowanie sił między krawędzi
     if (simulateForces) {
         //przyciaganie do srodka 
         for (Vertex &v:vertices) {
@@ -96,6 +95,7 @@ void Graph::CalculateForces(const int width,const int height,bool simulateForces
             vertices[v].force += forces;
             vertices[w].force -= forces;
         }
+
         //-----------------------------------------
         //przyciąganie się wierzchołek - midkrawędź
         float selfLoopMltp = 1;
@@ -104,15 +104,14 @@ void Graph::CalculateForces(const int width,const int height,bool simulateForces
         forceValue = MidEdgeVertexAttractionForce(distance,selfLoopMltp);
         angle      = GetAngleByPoints(vertices[v].position, edge.midEFrom.position);
         forces = sf::Vector2f(cos(angle) * forceValue, sin(angle) * forceValue);
-        //vertices[v].force += forces;
         edge.midEFrom.force -= forces;
 
         distance   = getLength(vertices[w].position, edge.midETo.position);
         forceValue = MidEdgeVertexAttractionForce(distance,selfLoopMltp);
         angle      = GetAngleByPoints(vertices[w].position, edge.midETo.position);
         forces = sf::Vector2f(cos(angle) * forceValue, sin(angle) * forceValue);
-        //vertices[w].force += forces;
         edge.midETo.force -= forces;
+
         //----------------------------------------
         //przyciąganie się midkrawędź - midkrawędź
         distance   = getLength(edge.midEFrom.position, edge.midETo.position);
@@ -122,8 +121,6 @@ void Graph::CalculateForces(const int width,const int height,bool simulateForces
         edge.midEFrom.force += forces;
         edge.midETo.force   -= forces;
     }
-
-
 
     for (int i = 0; i < allEdges.size(); ++i) {
         for (int j = i+1; j < allEdges.size(); ++j) {
@@ -142,12 +139,11 @@ void Graph::ApplyForces(int width,int height) {
             continue;
         }
 		sf::Vector2f delta = sf::Vector2f(v.force.x , v.force.y );
-        //std::cerr<<"F "<< i <<" "<<delta.x<<" "<<delta.y<<std::endl;
 
-        if (delta.x > 10) delta.x  = 10;
-        if (delta.x < -10) delta.x = -10;
-        if (delta.y > 10) delta.y  = 10;
-        if (delta.y < -10) delta.y = -10;
+        if (delta.x > 10)   delta.x  = 10;
+        if (delta.x < -10)  delta.x = -10;
+        if (delta.y > 10)   delta.y  = 10;
+        if (delta.y < -10)  delta.y = -10;
 
 		v.position += delta;
         v.KeepInGraphArea(width, height);
@@ -208,10 +204,8 @@ float Graph::CenterGravityForce(float distance) {
 
 float GetPtByPerc( float n1 , float n2 , float perc ) {
     float diff = n2 - n1;
-
     return n1 + ( diff * perc );
 }    
-
 
 void Graph::Draw(sf::RenderTarget& window, bool editLook, bool editEdges){
     sf::Vector2f dbg1,dbg2;
@@ -234,10 +228,9 @@ void Graph::Draw(sf::RenderTarget& window, bool editLook, bool editEdges){
             }
         }
         
-        
         float angleArrow = 10000;
         bool wasInside = false;
-        //if (editLook) edge.color = sf::Color::Black;
+        
         for( int i = 0 ; i <= EDGE_POINTS ; i++ ) {
             float perc = (float)i / (float)EDGE_POINTS;
             sf::Vector2f aL(GetPtByPerc(posFrom.x, posMEFrom.x ,perc), GetPtByPerc(posFrom.y, posMEFrom.y ,perc));
@@ -250,7 +243,6 @@ void Graph::Draw(sf::RenderTarget& window, bool editLook, bool editEdges){
             sf::Vector2f pos(GetPtByPerc(dL.x , eL.x , perc), GetPtByPerc(dL.y , eL.y , perc));
             if (i > 0) {
                 int thisEdgeWidth = EDGE_WIDTH;
-                //if (edge.color == sf::Color::Red || edge.isHighlighted)
                 if (edge.isHighlighted)
                     thisEdgeWidth *= 2;
 
@@ -259,6 +251,7 @@ void Graph::Draw(sf::RenderTarget& window, bool editLook, bool editEdges){
                 edgeSeg.setPosition(prvPos);
                 edgeSeg.setOrigin(0,thisEdgeWidth/2);
                 edgeSeg.setFillColor(edge.color);
+
                 float angle = GetAngleByPoints(prvPos,pos);  
                 edgeSeg.setRotation(angle*(180/M_PI));
                 window.draw(edgeSeg);
@@ -276,9 +269,6 @@ void Graph::Draw(sf::RenderTarget& window, bool editLook, bool editEdges){
             }
             prvPos = pos;            
         }
-        
-        //angleArrow = GetAngleByPoints(edge.midETo.position,vertices[edge.idVertexTo].position);       
-        //angleArrow += M_PI;
         
         if (isDirected) {
             sf::RectangleShape arrowLine1(sf::Vector2f(ARR_H, ARR_W));
@@ -301,17 +291,15 @@ void Graph::Draw(sf::RenderTarget& window, bool editLook, bool editEdges){
             window.draw(dataShape);
         }
         
-        edge.t1.setString(std::to_string(edge.weight1));//TA LINIJKA DO USUNIECIA
+        edge.t1.setString(std::to_string(edge.weight1));
         edge.t1.setOrigin(edge.t1.getLocalBounds().width/2,edge.t1.getLocalBounds().height/2);
         edge.t1.setPosition(edge.dataPoint.x,edge.dataPoint.y);
         edge.t2.setPosition(edge.dataPoint.x,edge.dataPoint.y+20);
         window.draw(edge.t1);
-        //window.draw(edge.t2);
     }
 
     sf::CircleShape shape(V_RADIUS,100);
     shape.setOrigin(sf::Vector2f(shape.getGlobalBounds().width/2,shape.getGlobalBounds().height/2));
-    //shape.setFillColor(sf::Color::Blue);
     
     for (Vertex v: vertices) {
         v.text1.setString(std::to_string(v.id));
@@ -335,33 +323,13 @@ void Graph::Draw(sf::RenderTarget& window, bool editLook, bool editEdges){
 
         window.draw(v.text1);
 
-        v.subText.setPosition(sf::Vector2f(v.text1.getPosition().x, v.text1.getPosition().y + 20));
-        v.subText2.setPosition(sf::Vector2f(v.subText.getPosition().x, v.subText.getPosition().y + 20));
-        v.subText.setOrigin(sf::Vector2f(v.subText.getGlobalBounds().width/2,v.subText.getGlobalBounds().height/2));
-        v.subText2.setOrigin(sf::Vector2f(v.subText2.getGlobalBounds().width/2,v.subText2.getGlobalBounds().height/2));
-        window.draw(v.subText);
-        window.draw(v.subText2);
+        if (!editLook) {
+            v.subText.setPosition(sf::Vector2f(v.text1.getPosition().x, v.text1.getPosition().y + 20));
+            v.subText2.setPosition(sf::Vector2f(v.subText.getPosition().x, v.subText.getPosition().y + 20));
+            v.subText.setOrigin(sf::Vector2f(v.subText.getGlobalBounds().width/2,v.subText.getGlobalBounds().height/2));
+            v.subText2.setOrigin(sf::Vector2f(v.subText2.getGlobalBounds().width/2,v.subText2.getGlobalBounds().height/2));
+            window.draw(v.subText);
+            window.draw(v.subText2);
+        }
     }
-
-
-
-    /*//Debug
-    sf::CircleShape shape2(5.f,100);
-    shape2.setFillColor(sf::Color(200,0,0,100));
-    shape2.setOrigin(sf::Vector2f(shape2.getGlobalBounds().width/2,shape2.getGlobalBounds().height/2));
-    for (Edge edge: allEdges) {
-        //shape2.setPosition(edge.midEFrom.position);
-        //shape2.setPosition(edge.dataPoint);
-        //window.draw(shape2);
-    }
-    shape2.setFillColor(sf::Color(0,200,0,100));
-    for (Edge edge: allEdges) {
-        shape2.setPosition(edge.midETo.position);
-        //window.draw(shape2);
-    }
-    shape2.setPosition(dbg1);
-    window.draw(shape2);
-
-    shape2.setPosition(dbg2);
-    window.draw(shape2);*/
 }

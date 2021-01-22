@@ -35,7 +35,7 @@ Edge::Edge(int v, int w, int w1, int w2,sf::Font *font) {
     weight1 = w1;
     weight2 = w2;
     isHighlighted = false;
-    color = sf::Color::Black;//defaultowo na czarny
+    color = sf::Color::Black;
     dataPoint = sf::Vector2f(0,0);
     t1.setFont(*font);
     t2.setFont(*font);
@@ -89,48 +89,25 @@ void Graph::RemoveEdgeFromVertex(int id,int v) {
     }
 }
 
-
 void Graph::RemoveEdge(int id) {
-    std::cerr<<"Usuwanie edge "<<id<<" "<<allEdges[id].idVertexFrom<<" "<<allEdges[id].idVertexTo<<std::endl;
     RemoveEdgeFromVertex(id,allEdges[id].idVertexFrom);
     RemoveEdgeFromVertex(id,allEdges[id].idVertexTo);
     std::swap(allEdges[id],allEdges.back());
     allEdges.pop_back();
     for (int &v: vertices[allEdges[id].idVertexFrom].edgesIdFrom) {
-        if (v == allEdges.size()) {
-            v = id;
-            break;
-        }
+        if (v == allEdges.size()) {v = id; break;}
     }
     for (int &v: vertices[allEdges[id].idVertexTo].edgesIdTo) {
-        if (v == allEdges.size()) {
-            v = id;
-            break;
-        }
+        if (v == allEdges.size()) {v = id; break;}
     }    
     for(int i=0; i<allEdges.size(); i++)
         allEdges[i].id = i;
     
     for (int &v: vertices[allEdges[id].idVertexFrom].edgesIdTo) {
-        if (v == allEdges.size()) {
-            v = id;
-        }
+        if (v == allEdges.size()) {v = id;}
     }
     
     for (int &v: vertices[allEdges[id].idVertexTo].edgesIdFrom) {
-        if (v == allEdges.size()) {
-            v = id;
-        }
-    }
-
-
-    std::cerr<<"\n\npo usunieciu"<<std::endl;
-    for(Vertex v2: vertices) {
-        std::cerr<<"V: "<<v2.id<<std::endl;
-    }
-                        
-    std::cerr<<"edges:"<<std::endl;
-    for(Edge e2: allEdges) {
-        std::cerr<<"E: "<<e2.id<<" "<<e2.idVertexFrom<<", "<<e2.idVertexTo<<std::endl;
+        if (v == allEdges.size()) {v = id;}
     }
 }

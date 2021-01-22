@@ -4,7 +4,6 @@
 #include "button.hpp"
 #include "../utils.hpp"
 
-
 Button::Button() {
     scale = 1;
     ifThisIsTextBox = false;
@@ -43,14 +42,11 @@ Button::Button(int _x, int _y, int _width, int _height, sf::Text _text,sf::Font*
     rectangle.setOutlineThickness(2);
     text = _text;
     Relocate();
- 
-    
 }
 
 void Button::Relocate() {
     rectangle.setPosition(x,y);
     rectangle.setSize(sf::Vector2f(width,height));
-    //text.setOutlineColor(sf::Color::Black);
     text.setOrigin(sf::Vector2f(text.getGlobalBounds().width/2,text.getGlobalBounds().height/2));
     text.setPosition(x + width / 2, y + height / 2 - 2);   
 }

@@ -12,22 +12,20 @@
 void dfs_reku(Graph &G, StepList* DFSStepList, int v) {
     G.vertices[v].data1 = 1;
     G.vertices[v].color = sf::Color(41, 230, 230);
-    //std::cerr<<"v: "<<v<<"\n";
-    ///////////////////////
+    
     std::vector<VertexChange> verticesChanges;
-    std::vector<EdgeChange> edgesChanges; // docelowo pusty
+    std::vector<EdgeChange> edgesChanges; 
 
     VertexChange onlyChange = VertexChange(G.vertices[v]);
     verticesChanges.push_back(onlyChange);
     DFSStepList->AddState(Step(verticesChanges,edgesChanges));
     verticesChanges.clear();
     edgesChanges.clear();
-    ////////////////////////
+
     if(G.isDirected == 0) {
         for(auto id: G.vertices[v].edgesIdFrom){ 
             if(G.vertices[G.allEdges[id].idVertexFrom].data1 == 0){ 
                 dfs_reku(G, DFSStepList, G.allEdges[id].idVertexFrom);
-
             }
         }
     }
@@ -41,15 +39,13 @@ void dfs_reku(Graph &G, StepList* DFSStepList, int v) {
 }
 
 void DFS(Graph *G,StepList *StepListPtr, std::vector<int>  &chosenV) {  
-    //ZEROWANIE
-    //Graph
     Graph GKopia(G);
     std::vector<VertexChange> initVerticesChanges;
     std::vector<EdgeChange> initEdgesChanges;
     for (Vertex &v: GKopia.vertices) {
         v.data1 = 0;
         v.data2 = 0;
-        v.color = sf::Color::Magenta;//dlaczego
+        v.color = sf::Color::Magenta;
         VertexChange singleChange = VertexChange(v);
         initVerticesChanges.push_back(singleChange);
     }
@@ -59,6 +55,3 @@ void DFS(Graph *G,StepList *StepListPtr, std::vector<int>  &chosenV) {
     dfs_reku(GKopia, StepListPtr,chosenV[0]);
 
 }
-
-
-

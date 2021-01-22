@@ -43,7 +43,6 @@ void Vertex::KeepInGraphArea(int width, int height) {
 void Graph::AddVertex(sf::Vector2f position){
     int newId = vertices.size();
     sf::Text text1("",*font);
-    //Text (const String &string, const Font &font, unsigned int characterSize=30)
     Vertex vertexToAdd = Vertex(position, newId, *font);
     vertices.push_back(vertexToAdd);
 }
@@ -60,29 +59,19 @@ void Graph::ChangeAll(int from, int to) {
     }    
 }
 
-
 void Graph::RemoveVertex(int id) {
-    std::cerr<<"Usuwanie v: "<<id<<std::endl;
     std::set<int> S;
     
     for (int i = 0; i < vertices[id].edgesIdFrom.size(); i++){  
         int edgeId = vertices[id].edgesIdFrom[i];
-        std::cerr<<edgeId<<std::endl;
         S.insert(edgeId);
     }
 
-    //std::<<cerr<<"vertices[id].edgesIdTo.size(): "<<vertices[id].edgesIdTo.size()<<std::endl;
     for (int i = 0; i < vertices[id].edgesIdTo.size(); i++){  
         int edgeId = vertices[id].edgesIdTo[i];
-        std::cerr<<edgeId<<std::endl;
         S.insert(edgeId);        
     }
 
-
-    // 0,1,2,3,4,5
-    // USUN 2,4
-    // 0, 1, 3, 5
-    // 
     for (auto it = S.begin(); it != S.end(); it++) {
         RemoveEdgeFromVertex(*it, allEdges[*it].idVertexFrom);
         RemoveEdgeFromVertex(*it, allEdges[*it].idVertexTo);
@@ -94,18 +83,9 @@ void Graph::RemoveVertex(int id) {
         if (it == S.begin()) break;
     }
     for (int i=0; i < allEdges.size(); i++) {
-        ChangeAll(allEdges[i].id, i); //zmien (Z, DO)
+        ChangeAll(allEdges[i].id, i); 
         allEdges[i].id = i;
     }
-    /* parametry dla Edge: id, idVertexFrom, idVertexTo;        
-        OK, 1) usuwamy krawędzie From v i To v
-            
-        OK, 2) -> wywalamy te krawędzie z list w wierzchołku, bez reindeksacji
-        3) -> dla kazdej kraw, swap dla allEdges, i wtedy reindeksacje dla fromV i toV dla Vertices
-
-        //ostatni wierzchołek wszędzie przyjmuje id tego co usuwamy
-    */
-
 
     for (int e: vertices.back().edgesIdFrom) allEdges[e].idVertexTo   = id;
     for (int e: vertices.back().edgesIdTo  ) allEdges[e].idVertexFrom = id;
@@ -114,17 +94,3 @@ void Graph::RemoveVertex(int id) {
     vertices[id].id = id;
     vertices.pop_back();
 }
-
-
-/*
-sf::Color::     Black
-                White
-                Red
-                Green
-                Blue
-                Yellow
-                Magenta
-                Cyan
-                Transparent
-                sf::Color(r,g,b,a);
-*/

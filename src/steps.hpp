@@ -33,8 +33,8 @@ struct Step{
 class StepList{
 public:
     Graph *G;
-    std::vector<Step> forwardSteps; // kończy się na pustym (ew.)        
-    std::vector<Step> backwardSteps; // zaczyna się od pustego           
+    std::vector<Step> forwardSteps;        
+    std::vector<Step> backwardSteps;          
     int currentStep;
     int maxStepEver;
     void InitState(Step); 
@@ -47,6 +47,5 @@ public:
     StepList();
     StepList &operator =(const StepList &__stepList);
 
-    
 };
 #endif

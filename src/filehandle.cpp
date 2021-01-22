@@ -7,31 +7,30 @@
 #include "vertex.hpp"
 #include "edge.hpp"
 #include "graph.hpp"
+
 void WriteBool( bool b, std::ofstream* ff )
 {
     char c;
-    if (b)
-        c = 127;
-    else
-        c = -128;
+    if (b) {c = 127;}
+    else {c = -128;}
     ff->write((const char*)&c, sizeof c);
 }
+
 bool ReadBool(std::ifstream* ff)
 {
     char c;
     ff->read((char*)&c, sizeof c);
     return c >= 0;
 }
-void WriteChar(char c, std::ofstream* ff)
-{
-    ff->write((const char*)&c, sizeof c);
-}
+
+void WriteChar(char c, std::ofstream* ff) { ff->write((const char*)&c, sizeof c); }
 char ReadChar(std::ifstream* ff)
 {
     char c;
     ff->read((char*)&c, sizeof c);
     return c;
 }
+
 void WriteInt(int n, std::ofstream* ff)
 {
     int r;
@@ -52,6 +51,7 @@ void WriteInt(int n, std::ofstream* ff)
         WriteChar(c, ff);
     }
 }
+
 int ReadInt(std::ifstream* ff)
 {
     int r, n = 0;
@@ -69,6 +69,7 @@ int ReadInt(std::ifstream* ff)
     }
     return z ? n : -n;
 }
+
 void ReadFile( const char * name, Graph * G )
 {
     G->vertices.clear();
@@ -100,6 +101,7 @@ void ReadFile( const char * name, Graph * G )
         G->AddEdge(fr, to, w1, w2,sf::Vector2f(mdpx,mdpy),sf::Vector2f(mdpx2,mdpy2));
     }
 }
+
 void WriteFile(const char* name, Graph* G)
 {
     int fti;
