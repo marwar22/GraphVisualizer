@@ -51,7 +51,7 @@ void Edge::SetColor(sf::Color temp_color){
     color = temp_color;
 }
 
-void Graph::AddEdge(int v,int w, int weight1=0, int weight2=0) {
+void Graph::AddEdge(int v,int w, int weight1=1, int weight2=1) {
 	Edge edge = Edge(v, w, weight1, weight2,font);
 	edge.midEFrom.position.x = (vertices[v].position.x + vertices[w].position.x)/2;
 	edge.midEFrom.position.y = (vertices[v].position.y + vertices[w].position.y)/2;

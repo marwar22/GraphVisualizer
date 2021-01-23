@@ -13,8 +13,6 @@
 #include "utils.hpp"
 #include "algorithms/algorithms.hpp"
 
-std::mt19937 rnd2(1234);
-int los0(int mi,int mx) {return rnd2()%(mx-mi+1)+mi;}
 
 void ChooseVertexInit(Application &app)
 {

@@ -15,8 +15,8 @@
 				"-lsfml-graphics",
 				"-lsfml-window",
 				"-lsfml-system",			
-				"-std=c++17",
-				"-DDEBUG"
+				"-std=c++17"
+				
 			],
 			"options": {
 				"cwd": "${workspaceFolder}"

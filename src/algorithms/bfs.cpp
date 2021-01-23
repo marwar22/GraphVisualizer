@@ -72,7 +72,12 @@ void BFS(Graph *G,StepList *StepListPtr, std::vector<int> &chosenV) {
                     nVerticesChanges.push_back(VertexChange(GKopia.vertices[u]));
                     nEdgesChanges.push_back(EdgeChange(GKopia.allEdges[id]));
                     prvEdgesId.push_back(id);
-                }         
+                }                 
+                else {
+                    GKopia.allEdges[id].color = sf::Color::Red;
+                    nEdgesChanges.push_back(EdgeChange(GKopia.allEdges[id]));
+                    prvEdgesId.push_back(id);
+                }  
             }
         }
         for(int id: GKopia.vertices[v].edgesIdTo) {
@@ -87,11 +92,16 @@ void BFS(Graph *G,StepList *StepListPtr, std::vector<int> &chosenV) {
                 nVerticesChanges.push_back(VertexChange(GKopia.vertices[u]));
                 nEdgesChanges.push_back(EdgeChange(GKopia.allEdges[id]));
                 prvEdgesId.push_back(id);
+            }             
+            else {
+                GKopia.allEdges[id].color = sf::Color::Red;
+                nEdgesChanges.push_back(EdgeChange(GKopia.allEdges[id]));
+                prvEdgesId.push_back(id);
             }
         }
 
         Step nStep2 = Step(nVerticesChanges, nEdgesChanges);
-        if(nVerticesChanges.size()) StepListPtr->AddState(nStep2);
+        if(nVerticesChanges.size() || nEdgesChanges.size()) StepListPtr->AddState(nStep2);
     }
 
     // Dot. ostatniego kroku (wierzchołka)
@@ -100,6 +110,11 @@ void BFS(Graph *G,StepList *StepListPtr, std::vector<int> &chosenV) {
     if (prvVId != -1){
         GKopia.vertices[prvVId].color = sf::Color(0,100,0);
         nLVerticesChanges.push_back(VertexChange(GKopia.vertices[prvVId]));   
+    }
+    while (prvEdgesId.size()) {
+        GKopia.allEdges[prvEdgesId.back()].color = sf::Color::Black;
+        nLEdgesChanges.push_back(GKopia.allEdges[prvEdgesId.back()]);
+        prvEdgesId.pop_back();
     }
     Step nStep = Step(nLVerticesChanges, nLEdgesChanges);
     StepListPtr->AddState(nStep);

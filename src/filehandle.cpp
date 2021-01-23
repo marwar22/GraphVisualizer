@@ -81,7 +81,7 @@ void ReadFile( const char * name, Graph * G )
     G->isDirected = ReadBool(&ff);
     G->isWeighted = ReadBool(&ff);
     vs = ReadInt(&ff);
-    for (int i = 0; i < vs; i++) {
+    for (int i = 0; i < vs && vs >= 0; i++) {
         itf = ReadInt(&ff);
         tmp.x = itf;
         itf = ReadInt(&ff);
@@ -89,7 +89,7 @@ void ReadFile( const char * name, Graph * G )
         G->AddVertex(tmp);
     }
     es = ReadInt(&ff);
-    for (int i = 0; i < es; i++) {
+    for (int i = 0; i < es && es >= 0; i++) {
         fr = ReadInt(&ff);
         to = ReadInt(&ff);
         w1 = ReadInt(&ff);

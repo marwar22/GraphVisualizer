@@ -14,12 +14,17 @@ int nr = 1;
 std::vector<int> order;
 
 std::map<int,sf::Color> mapa={
-    {0,sf::Color::Black},
     {1,sf::Color::Magenta},
     {2,sf::Color::Red},
     {3,sf::Color((uint)204,(uint)102,(uint)0,(uint)255)},
-    {4,sf::Color((uint)153,(uint)0,(uint)0,(uint)255)},
-    {5,sf::Color((uint)0,(uint)102,(uint)102,(uint)255)}
+    {4,sf::Color((uint)190,(uint)190,(uint)190,(uint)255)},
+    {5,sf::Color((uint)0,(uint)102,(uint)102,(uint)255)},
+    {6,sf::Color((uint)150,(uint)50,(uint)150,(uint)255)},
+    {7,sf::Color((uint)153,(uint)0,(uint)0,(uint)255)},    
+    {8,sf::Color::Green},
+    {9,sf::Color((uint)91,(uint)83,(uint)66,(uint)255)},
+    {10,sf::Color((uint)190,(uint)180,(uint)250,(uint)255)},
+    {11,sf::Color::Black}
 };
 int num = mapa.size();
 int cdx;
@@ -69,6 +74,8 @@ void dfs_reku2(Graph &G, StepList* DFSStepList, int v) {
 }
 
 void SCC(Graph *G,StepList *StepListPtr, std::vector<int>  &chosenV) {  
+    G->isDirected = 1;
+
     nr = 1;
     idx = 0; 
     cdx = 0;
@@ -103,7 +110,7 @@ void SCC(Graph *G,StepList *StepListPtr, std::vector<int>  &chosenV) {
         if(GKopia.vertices[v].data1 == 0) {
             dfs_reku2(GKopia, StepListPtr,v);
             nr++;
-            cdx = (cdx + 1) % num;
+            cdx = (cdx + 1) % num + 1;
         }
     }
     order.clear();

@@ -8,11 +8,12 @@
 #include "app.hpp"
 
 
-std::mt19937 rnd(123456);
+std::mt19937 rnd;
 int los(int mi,int mx) {return rnd()%(mx-mi+1)+mi;}
 
 int main()
 {
+    rnd.seed(time(NULL));
     system("mkdir -p savedGraphs");
     Application app;
     
@@ -31,7 +32,13 @@ int main()
             if (los(1,1000) <= p) app.G.AddEdge(i,j,los(0,10),0);
         }
     }
-    app.G.AddEdge(1,0,(0,10),0);
+
+    int loop_x = los(0,9);
+    int v = los(0,9), u = los(0,9);
+    while(v == u) u = los(0,9);
+    app.G.AddEdge(loop_x, loop_x,(0,10),0);
+    app.G.AddEdge(u,v,(0,10),0);
+    app.G.AddEdge(v,u,(0,10),0);
     app.Run();
     return 0;
 }

@@ -38,7 +38,6 @@ void MST(Graph *G,StepList *StepListPtr, std::vector<int> &chosenV) {
         int edgeId = Q.top().second.second;
         int distance = Q.top().first; 
         Q.pop();
-        std::cerr<<"jestem w v="<<v<<"\n";
         if(GKopia.vertices[v].data1 == 1)
             continue;
 
@@ -77,7 +76,6 @@ void MST(Graph *G,StepList *StepListPtr, std::vector<int> &chosenV) {
             if(GKopia.vertices[GKopia.allEdges[id].idVertexFrom].data1 == 0)   {
                 int u = GKopia.allEdges[id].idVertexFrom;
                 Q.push({GKopia.allEdges[id].weight1,{u, id}});
-                std::cerr<<"pushuje v="<<u<<"   waga: "<<GKopia.allEdges[id].weight1<<"\n";
 
                 GKopia.vertices[u].color = sf::Color::Green;
                 GKopia.allEdges[id].color = sf::Color::White;
@@ -92,8 +90,6 @@ void MST(Graph *G,StepList *StepListPtr, std::vector<int> &chosenV) {
             if(GKopia.vertices[GKopia.allEdges[id].idVertexTo].data1 == 0){
                 int u = GKopia.allEdges[id].idVertexTo;
                 Q.push({GKopia.allEdges[id].weight1,{u, id}});
-                std::cerr<<"pushuje v="<<u<<"   waga: "<<GKopia.allEdges[id].weight1<<"\n";
-
                 GKopia.vertices[u].subText.setString("vis");
                 GKopia.vertices[u].color = sf::Color::Green;
                 GKopia.allEdges[id].color = sf::Color::White;

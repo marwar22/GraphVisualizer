@@ -1,0 +1,27 @@
+//-> 100% kolejne algorytmy (dijkstra jest gotowa) 
+//-> 100% skalowanie przycisków w zależności od rozdzielczości ekranu (w większości gotowe, textBoxy się nie poruszają)
+//-> 100% ogrągłe krawędzie, krawędzie pętle (działa) ///, należy dostosować)
+//-> 100% umożliwienie wielu krawędzi między dwoma wierzchołkami (zostały sprawdzenia) // i dostosowania sił)
+//-> 100% bugfix inicjalizacji vertexa
+//-> 100% przy wpisywaniu nazwy pliku 
+//-> 100% wyłaczyć subtexty wierzchołków przy edycji grafu
+//-> 100% sprawdzanie istnienia folderu przy makedir
+//-> 100% wywalić debug
+//-> 100% usunąć komentarzed zbędne
+//-> 100% przykładowe grafy
+//-> 100% zrobienie i mergowanie brancha
+//-> 100% editEdge nie zeruje highlighted
+-> poprawa kolorów {
+    RĘCZNIE!!!! ????
+    zmienić kolory dla algorytmów
+
+    VERTEX 
+    selected
+    visited/onQueue
+    computed now
+    
+    
+    EDGE:
+    selected
+    higlighted
+}

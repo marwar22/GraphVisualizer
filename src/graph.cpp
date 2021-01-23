@@ -29,7 +29,7 @@ float getLength(sf::Vector2f p1, sf::Vector2f p2) {//odległość między dwoma 
 
 Graph::Graph(sf::Font * f) {
     font = f;
-    isDirected = true;
+    isDirected = false;
     isWeighted = false;
 }
 
@@ -222,7 +222,7 @@ void Graph::Draw(sf::RenderTarget& window, bool editLook, bool editEdges){
 
         if (editLook) {
             if (edge.isHighlighted) {
-                edge.color = sf::Color::Yellow;
+                edge.color = sf::Color(141,166,0);
             } else {
                 edge.color = sf::Color::Black;    
             }
@@ -255,7 +255,7 @@ void Graph::Draw(sf::RenderTarget& window, bool editLook, bool editEdges){
                 float angle = GetAngleByPoints(prvPos,pos);  
                 edgeSeg.setRotation(angle*(180/M_PI));
                 window.draw(edgeSeg);
-                if (!wasInside) {
+                if (!wasInside && i >= EDGE_POINTS/2) {
                     if (getLength(pos,vertices[edge.idVertexTo].position) <= V_RADIUS) {
                         dbg1 = pos;
                         dbg2 = prvPos;
@@ -277,8 +277,8 @@ void Graph::Draw(sf::RenderTarget& window, bool editLook, bool editEdges){
             arrowLine2.setOrigin(sf::Vector2f(0, 0));
             arrowLine1.setFillColor(edge.color);
             arrowLine2.setFillColor(edge.color);
-            arrowLine1.setPosition(vertices[edge.idVertexTo].position + sf::Vector2f(cos(angleArrow)*V_RADIUS, sin(angleArrow)*V_RADIUS)); // jaka konwencja from/to
-            arrowLine2.setPosition(vertices[edge.idVertexTo].position + sf::Vector2f(cos(angleArrow)*V_RADIUS, sin(angleArrow)*V_RADIUS)); // jaka konwencja from/to
+            arrowLine1.setPosition(vertices[edge.idVertexTo].position + sf::Vector2f(cos(angleArrow)*V_RADIUS, sin(angleArrow)*V_RADIUS)); 
+            arrowLine2.setPosition(vertices[edge.idVertexTo].position + sf::Vector2f(cos(angleArrow)*V_RADIUS, sin(angleArrow)*V_RADIUS)); 
 
             arrowLine1.setRotation(angleArrow*(180/M_PI) + 45);
             arrowLine2.setRotation(angleArrow*(180/M_PI) - 45);

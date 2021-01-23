@@ -30,7 +30,7 @@ void dfs_reku_bipartial(Graph &G, StepList* DFSStepList, int v, int group,int pa
     if (group == 1)
         G.vertices[v].color = sf::Color(0,100,0); 
     else 
-        G.vertices[v].color = sf::Color(155,53,0);
+        G.vertices[v].color = sf::Color(200,100,0);
 
     verticesChanges.push_back(VertexChange(G.vertices[v]));        
     DFSStepList->AddState(Step(verticesChanges,edgesChanges));
@@ -94,8 +94,8 @@ void dfs_reku_bipartial(Graph &G, StepList* DFSStepList, int v, int group,int pa
             G.vertices[parent].color = sf::Color(155,53,0);
             
         verticesChanges.push_back(VertexChange(G.vertices[parent]));
-        DFSStepList->AddState(Step(verticesChanges,edgesChanges));
-        verticesChanges.clear();
+        //DFSStepList->AddState(Step(verticesChanges,edgesChanges));
+        //verticesChanges.clear();
     }
     if (group == 1)
         G.vertices[v].color = sf::Color(0,200,0); 
