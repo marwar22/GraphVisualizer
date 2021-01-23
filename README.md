@@ -16,8 +16,8 @@ Zalecane jest uruchomienie programu na systemach z rodziny Linux. Pozwala on na 
 * `build-essential`
 
 #### Instalacja pakietów dla Debian/Ubuntu:
-`sudo apt-get install libsfml-dev`
-`sudo apt-get install build-essential`
+* `sudo apt-get install libsfml-dev`
+* `sudo apt-get install build-essential`
 
 ## Uruchomienie programu
 Dzięki utworzonemu plikowi `makefile` kompilacja jest prosta i intuicyjna. Polega na wejściu w lokalizację pobranego repozytorium oraz wpisaniu polecenia:
@@ -26,8 +26,8 @@ Powstanie wtedy plik wykonywalny `GraphVisualizer`, który należy wykonać pole
 `./GraphVisualizer`
 
 Jednak w przypadku, gdy powyższy sposób okaże się nieskuteczny, przewidziana jest również druga, zastępcza metoda kompilacji i uruchomienia. Po wejściu do katalogu repozytorium w terminalu należy wpisać:
-`g++ -c src/*.cpp src/algorithms/*.cpp src/graphics/*.cpp`
-`g++ *.o -o GraphVisualizer -lsfml-graphics -lsfml-window -lsfml-system`
+* `g++ -c src/*.cpp src/algorithms/*.cpp src/graphics/*.cpp`
+* `g++ *.o -o GraphVisualizer -lsfml-graphics -lsfml-window -lsfml-system`
 
 Ponadto powyższa metoda pozwala na dodanie flagi kompilacji `-DDEBUG`, która umożliwia ułatwioną analizę stanu grafu, tj. informacje dotyczące wierzchołków i krawędzi.
 
