@@ -23,7 +23,13 @@ Button::Button(int _x, int _y, int _width, int _height, std::string napis,sf::Fo
     text.setFont(*font);
     text.setString(napis);
     text.setCharacterSize(20);
-    text.setFillColor(sf::Color::Black);
+
+    #if (SFML_VERSION_MAJOR == 2 && SFML_VERSION_MINOR == 5 && SFML_VERSION_PATCH == 1)
+		text.setFillColor(sf::Color::Black);
+    #else
+		text.setColor(sf::Color::Black);
+    #endif
+    
     Relocate();
     
 }
@@ -52,7 +58,12 @@ void Button::Relocate() {
 }
 void Button::SetColor(sf::Color color) {
     rectangle.setOutlineColor(color);
-    text.setFillColor(color);
+    #if (SFML_VERSION_MAJOR == 2 && SFML_VERSION_MINOR == 5 && SFML_VERSION_PATCH == 1)
+    	text.setFillColor(color);
+    #else
+    	text.setColor(color);
+    #endif
+
 }
 
 void Button::draw(sf::RenderTarget& window) {

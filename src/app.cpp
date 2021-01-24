@@ -165,7 +165,7 @@ Application::Application()
 {
     if (!font.loadFromFile("Fonts/OpenSans-Regular.ttf"))
 		throw("NIE MA CZCIONKI\n");
-   
+    
     G = Graph(&font);
     stepLista = StepList(&G);
     aktualnyStan    = addV;
@@ -173,9 +173,21 @@ Application::Application()
     secondVertexId  = -1;    
     holdingVertexId = -1;
     simulateForces = false;
-    sf::ContextSettings settings;
-    settings.antialiasingLevel = 0;
+    settings.antialiasingLevel = 8;
     
+    sf::RenderTexture fejktekstura;
+    
+    #if (SFML_VERSION_MAJOR == 2 && SFML_VERSION_MINOR == 5 && SFML_VERSION_PATCH == 1)
+        while(!fejktekstura.create(1,1,settings)) {
+        	settings.antialiasingLevel/=2;
+    	}
+    #else
+        settings.antialiasingLevel = 0;
+    #endif
+    
+
+
+
     runningForward = false;
     runningBack = false;
     timeStep = (1.f/16.f); 
@@ -319,11 +331,16 @@ void Application::Render() {
 }
 
 void Application::RenderGraphArea(){
-    sf::ContextSettings settings;
-    settings.antialiasingLevel = 8;
     
     sf::RenderTexture GraphArea;
-    GraphArea.create(window.getSize().x,window.getSize().y-TOOLBAR_HEIGHT,settings);
+    
+    #if (SFML_VERSION_MAJOR == 2 && SFML_VERSION_MINOR == 5 && SFML_VERSION_PATCH == 1)
+    	GraphArea.create(window.getSize().x,window.getSize().y-TOOLBAR_HEIGHT,settings);
+    #else
+        GraphArea.create(window.getSize().x,window.getSize().y-TOOLBAR_HEIGHT);
+    #endif
+    
+
     GraphArea.clear(sf::Color::Blue);
 
     G.Draw(GraphArea,aktualnyStan != algorithmR, (aktualnyStan == editE || aktualnyStan == removeE));
@@ -490,11 +507,14 @@ void SetPositionsForButtons( std::vector<Button>* buttonsv, Application* app )
 }
 
 void Application::RenderToolBar() {
-    sf::ContextSettings settings;
-    settings.antialiasingLevel = 8;
     
     sf::RenderTexture toolBar;
-    toolBar.create(window.getSize().x,TOOLBAR_HEIGHT,settings);
+    #if (SFML_VERSION_MAJOR == 2 && SFML_VERSION_MINOR == 5 && SFML_VERSION_PATCH == 1)
+    	toolBar.create(window.getSize().x,TOOLBAR_HEIGHT,settings);
+    #else
+    	toolBar.create(window.getSize().x,TOOLBAR_HEIGHT);
+    #endif
+
     toolBar.clear(sf::Color::Green);
 
     sf::RectangleShape shape(sf::Vector2f(toolBar.getSize().x,TOOLBAR_HEIGHT));
@@ -543,18 +563,27 @@ void Application::RenderToolBar() {
 }
 
 void Application::RenderTextTyping() {
-    sf::ContextSettings settings;
-    settings.antialiasingLevel = 8;
     sf::Text inputboxtext;
     inputboxtext.setFont(font);
     inputboxtext.setString(textEntered);
     inputboxtext.setCharacterSize(20);
-    inputboxtext.setFillColor(sf::Color(1,1,1));
+    
+    #if (SFML_VERSION_MAJOR == 2 && SFML_VERSION_MINOR == 5 && SFML_VERSION_PATCH == 1)
+    	inputboxtext.setFillColor(sf::Color(1,1,1));
+    #else
+    	inputboxtext.setColor(sf::Color(1,1,1));
+    #endif
+
     inputboxtext.setOrigin(sf::Vector2f(inputboxtext.getGlobalBounds().width/2,0));
     inputboxtext.setPosition(INPUT_WIDTH/2,INPUT_HEIGHT/2-13);
     
     sf::RenderTexture inputbox;
-    inputbox.create(INPUT_WIDTH,INPUT_HEIGHT,settings);
+    #if (SFML_VERSION_MAJOR == 2 && SFML_VERSION_MINOR == 5 && SFML_VERSION_PATCH == 1)
+    	inputbox.create(INPUT_WIDTH,INPUT_HEIGHT,settings);
+    #else
+    	inputbox.create(INPUT_WIDTH,INPUT_HEIGHT);
+    #endif
+
     inputbox.clear(sf::Color(240, 240, 240));
 
     sf::RectangleShape shape(sf::Vector2f(inputbox.getSize().x,TOOLBAR_HEIGHT));

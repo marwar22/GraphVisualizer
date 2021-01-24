@@ -41,7 +41,7 @@ public:
     int algorithmId;
     bool simulateForces;
     std::string textEntered;
-
+	sf::ContextSettings settings;
     bool runningForward;
     bool runningBack;
     long double lastStep;

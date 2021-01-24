@@ -1,4 +1,4 @@
-# Graph Visualizer 1.0.0
+# Graph Visualizer 1.1.0
 
 [![Project Status: Active – The project has reached a stable, usable state and is being actively developed.](http://www.repostatus.org/badges/latest/active.svg)](http://www.repostatus.org/#active) [![License: GPL v3](https://img.shields.io/badge/License-GPLv3-blue.svg)](https://www.gnu.org/licenses/gpl-3.0) [![Lines of Code](https://tokei.rs/b1/github/marwar22/GraphVisualizer)](https://github.com/marwar22/GraphVisualizer) [![GitHub contributors](https://img.shields.io/github/contributors/marwar22/GraphVisualizer)](https://GitHub.com/marwar22/GraphVisualizer/graphs/contributors/) [![Open Source Love svg1](https://badges.frapsoft.com/os/v1/open-source.svg?v=103)](https://github.com/ellerbrock/open-source-badges/)
 
@@ -16,6 +16,7 @@ Zalecane jest uruchomienie programu na systemach z rodziny Linux. Pozwala on na 
 * `build-essential`
 
 #### Instalacja pakietów dla Debian/Ubuntu:
+* `sudo apt-get update`
 * `sudo apt-get install libsfml-dev`
 * `sudo apt-get install build-essential`
 
@@ -33,7 +34,8 @@ Ponadto powyższa metoda pozwala na dodanie flagi kompilacji `-DDEBUG`, która u
 
 ## Wykorzystane narzędzia
 `C++ 17`
-`SFML 2.5.1`
+`SFML 2.5.1` - najwyższa wspierana wersja biblioteki SFML,
+Zapewniane wsparcie dla wersji starszych, takich jak `2.4.2` czy `2.3.2` jest ograniczone, przykładowo nie jest możliwa obsługa technologii antyaliasing'u (ang. anti-aliasing). Ponadto dla wersji `2.5.1` automatycznie dobierany jest odpowiedni współczynnik próbkowania (ang. sampling level.). Autorzy pragną zaznaczyć, że instalowana domyślnie wersja biblioteki SFML może zależeć od wersji systemu operacyjnego użytkownika.
 
 ## Zaimplementowane algorytmy
 Użytkownikowi końcowemu udostępniamy do dyspozycji kilka wartościowych dydaktycznie algorytmów. Są to: 
@@ -128,7 +130,7 @@ Następnie użytkownik znajduje się w polu docelowym - w polu wizualizacji wybr
     |     ├── tree1.gv
     |     ├── tree2.gv
     |     └── tree3.gv
-    |     
+    |
     ├── app.cpp
     ├── app.hpp
     ├── edge.cpp
@@ -145,7 +147,7 @@ Następnie użytkownik znajduje się w polu docelowym - w polu wizualizacji wybr
     └── vertex.hpp
 ```
 ## Wersja
-Obecna wersja programu: 1.0.0
+Obecna wersja programu: 1.1.0
 
 ## Autorzy
 Mikołaj Jaszcza | Michał Kierul | Marcin Wróbel | Marcin Sarnecki
