@@ -16,14 +16,14 @@ std::vector<int> order;
 std::map<int,sf::Color> mapa={
     {1,sf::Color::Magenta},
     {2,sf::Color::Red},
-    {3,sf::Color((uint)204,(uint)102,(uint)0,(uint)255)},
-    {4,sf::Color((uint)190,(uint)190,(uint)190,(uint)255)},
-    {5,sf::Color((uint)0,(uint)102,(uint)102,(uint)255)},
-    {6,sf::Color((uint)150,(uint)50,(uint)150,(uint)255)},
-    {7,sf::Color((uint)153,(uint)0,(uint)0,(uint)255)},    
+    {3,sf::Color((unsigned int)204,(unsigned int)102,(unsigned int)0,(unsigned int)255)},
+    {4,sf::Color((unsigned int)190,(unsigned int)190,(unsigned int)190,(unsigned int)255)},
+    {5,sf::Color((unsigned int)0,(unsigned int)102,(unsigned int)102,(unsigned int)255)},
+    {6,sf::Color((unsigned int)150,(unsigned int)50,(unsigned int)150,(unsigned int)255)},
+    {7,sf::Color((unsigned int)153,(unsigned int)0,(unsigned int)0,(unsigned int)255)},    
     {8,sf::Color::Green},
-    {9,sf::Color((uint)91,(uint)83,(uint)66,(uint)255)},
-    {10,sf::Color((uint)190,(uint)180,(uint)250,(uint)255)},
+    {9,sf::Color((unsigned int)91,(unsigned int)83,(unsigned int)66,(unsigned int)255)},
+    {10,sf::Color((unsigned int)190,(unsigned int)180,(unsigned int)250,(unsigned int)255)},
     {11,sf::Color::Black}
 };
 int num = mapa.size();

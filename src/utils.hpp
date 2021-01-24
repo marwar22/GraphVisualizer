@@ -28,6 +28,10 @@ const long double BUTTON_SCALE_DELTA = 0.002;
 const int INPUT_HEIGHT     = 40;
 const int INPUT_WIDTH     = 400;
 
+#ifdef _WIN32
+    const float M_PI = 3.1415926;  
+#endif
+
 void PrintGraphLog(Graph &G);
 
 #endif

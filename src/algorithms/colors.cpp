@@ -22,11 +22,11 @@ void ColorsAlgorithm(Graph *G,StepList *StepListPtr, std::vector<int> &chosenV) 
         firstVerticesChanges.clear();
         firstEdgesChanges.clear(); 
         for (Vertex v: G->vertices) {
-            VertexChange vChange = VertexChange(v.id, v.data1, v.data2, sf::Color((uint)losColor(0,255),(uint)losColor(0,255),(uint)losColor(0,255),(uint)255));
+            VertexChange vChange = VertexChange(v.id, v.data1, v.data2, sf::Color((unsigned int)losColor(0,255),(unsigned int)losColor(0,255),(unsigned int)losColor(0,255),(unsigned int)255));
             firstVerticesChanges.push_back(vChange);
         }
         for (Edge e: G->allEdges) {
-            EdgeChange eChange = EdgeChange(e.id, e.weight1, e.weight2, sf::Color((uint)losColor(0,255),(uint)losColor(0,255),(uint)losColor(0,255),(uint)255),e.isHighlighted);
+            EdgeChange eChange = EdgeChange(e.id, e.weight1, e.weight2, sf::Color((unsigned int)losColor(0,255),(unsigned int)losColor(0,255),(unsigned int)losColor(0,255),(unsigned int)255),e.isHighlighted);
             firstEdgesChanges.push_back(eChange);
         }
         StepListPtr->InitState(Step(firstVerticesChanges,firstEdgesChanges));

@@ -172,7 +172,7 @@ Application::Application()
     firstVertexId   = -1;
     secondVertexId  = -1;    
     holdingVertexId = -1;
-    simulateForces = false;
+    simulateForces = true;
     settings.antialiasingLevel = 8;
     
     sf::RenderTexture fejktekstura;
@@ -195,15 +195,26 @@ Application::Application()
     
     selectedEdgeId = -1;
     
-    sf::Text textAddVertex( L"Dodaj wierzchołek", font , 20);
-    sf::Text textRemoveVertex( L"Usuń wierzchołek", font , 20);
-    sf::Text textAddEdge( L"Dodaj krawędź", font , 20);
-    sf::Text textEdgeEdit( L"Edycja krawędzi", font , 20);
-    sf::Text textDeleteEdge( L"Usuń krawędź", font , 20);
-    sf::Text textForceSimulation( L"Symulacja sił", font , 20);
-    sf::Text textMoveVertex( L"Przesuń\nwierzchołek", font , 20);
-    sf::Text textReturn( L"Powrót", font , 20);
-
+    
+    #ifdef _WIN32
+        sf::Text textAddVertex( "Dodaj wierzcholek", font , 20);
+        sf::Text textRemoveVertex( "Usun wierzcholek", font , 20);
+        sf::Text textAddEdge( "Dodaj krawedz", font , 20);
+        sf::Text textEdgeEdit( "Edycja krawedzi", font , 20);
+        sf::Text textDeleteEdge( "Usun krawedz", font , 20);
+        sf::Text textForceSimulation( "Symulacja sil", font , 20);
+        sf::Text textMoveVertex( "Przesun\nwierzcholek", font , 20);
+        sf::Text textReturn( "Powrot", font , 20);
+    #else
+        sf::Text textAddVertex( L"Dodaj wierzchołek", font , 20);
+        sf::Text textRemoveVertex( L"Usuń wierzchołek", font , 20);
+        sf::Text textAddEdge( L"Dodaj krawędź", font , 20);
+        sf::Text textEdgeEdit( L"Edycja krawędzi", font , 20);
+        sf::Text textDeleteEdge( L"Usuń krawędź", font , 20);
+        sf::Text textForceSimulation( L"Symulacja sił", font , 20);
+        sf::Text textMoveVertex( L"Przesuń\nwierzchołek", font , 20);
+        sf::Text textReturn( L"Powrót", font , 20);
+    #endif
     buttons.push_back(Button(50,24,195,45,textAddVertex,         &font,ButtonAddVertex));
     buttons.push_back(Button(250,24,195,45,textRemoveVertex,     &font,ButtonRemoveVertex));
     buttons.push_back(Button(450,24,145,45,textAddEdge,          &font,ButtonAddEdge));

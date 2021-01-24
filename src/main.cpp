@@ -7,6 +7,9 @@
 #include "graphics/button.hpp"
 #include "app.hpp"
 
+#ifdef _WIN32
+    #include <windows.h>
+#endif
 
 std::mt19937 rnd;
 int los(int mi,int mx) {return rnd()%(mx-mi+1)+mi;}
@@ -14,7 +17,13 @@ int los(int mi,int mx) {return rnd()%(mx-mi+1)+mi;}
 int main()
 {
     rnd.seed(time(NULL));
-    system("mkdir -p savedGraphs");
+    #ifdef _WIN32
+        HWND hWnd = GetConsoleWindow();
+        ShowWindow(hWnd, SW_HIDE);
+        system("mkdir savedGraphs");
+    #else
+        system("mkdir -p savedGraphs");
+    #endif
     Application app;
     
     int n = 10, m = 0;

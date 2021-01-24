@@ -1,4 +1,4 @@
-# Graph Visualizer 1.2.0
+# Graph Visualizer 1.3.0
 
 [![Project Status: Active – The project has reached a stable, usable state and is being actively developed.](http://www.repostatus.org/badges/latest/active.svg)](http://www.repostatus.org/#active) [![License: GPL v3](https://img.shields.io/badge/License-GPLv3-blue.svg)](https://www.gnu.org/licenses/gpl-3.0) [![Lines of Code](https://tokei.rs/b1/github/marwar22/GraphVisualizer)](https://github.com/marwar22/GraphVisualizer) [![GitHub contributors](https://img.shields.io/github/contributors/marwar22/GraphVisualizer)](https://GitHub.com/marwar22/GraphVisualizer/graphs/contributors/) [![Open Source Love svg1](https://badges.frapsoft.com/os/v1/open-source.svg?v=103)](https://github.com/ellerbrock/open-source-badges/)
 
@@ -8,17 +8,32 @@
 ## Wstęp
 Program oferuje możliwość tworzenia, edycji, wczytywania oraz zapisu grafu. Pozwala na wizualizację krok po kroku działania szeregu algorytmów takich jak DFS, BFS, algorytm Dijkstry, wyznaczanie kolejności wierzchołków postorder, podział grafu na silnie spójne składowe i inne. Rozbudowany silnik fizyczny pomaga w zautomatyzowany sposób estetycznie rozmieścić wierzchołki i krawędzie w polu edycji grafu. Zapis oraz odczyt do pliku pozwalają na kontynuację pracy nawet po przerwaniu wykonywania programu. Zmiany kolorów zarówno wierzchołków jak i krawędzi podczas wykonywania kolejnych kroków algorytmów pozwalają na przejrzystą obserwację sposobu działania algorytmu. Interaktywne poruszanie się po liście kroków algorytmu, ze szczególnym uzwględnieniem w pełni działającej możliwości cofania tych dotychczasowo wykonanych, pozwala na dogłębną analizę i pełne zrozumienie podstaw algorytmiki. Program może być świetnym dopełnieniem klasycznej formy nauczania algorytmów, w szczególności dla zawodników oraz potencjalnych zawodników Olimpiady Informatycznej, Olimpiady Informatycznej Juniorów oraz innych osób zaczynających swoją przygodę w świecie algorytmiki konkursowej. 
 
+## Wykorzystane narzędzia
+`C++ 17`
+`SFML 2.5.1` - najwyższa wspierana wersja biblioteki SFML,
+Zapewniane wsparcie dla wersji starszych, takich jak `2.4.2` czy `2.3.2` jest ograniczone, przykładowo nie jest możliwa obsługa technologii antyaliasing'u (ang. anti-aliasing). Ponadto dla wersji `2.5.1` automatycznie dobierany jest odpowiedni współczynnik próbkowania (ang. sampling level.). Autorzy pragną zaznaczyć, że instalowana domyślnie wersja biblioteki SFML może zależeć od wersji systemu operacyjnego użytkownika.
 
 ## Instalacja niezbędnych zależności
-Zalecane jest uruchomienie programu na systemach z rodziny Linux. Pozwala on na łatwą instalację potrzebnych pakietów:
+Zalecane jest uruchomienie programu na systemach z rodziny Linux, jednak użytkownicy systemu Windows 10 również mogą korzystać z programu (szczegóły w temacie "Uruchomienie w systemie Windows 10"). Pozwala on na łatwą instalację potrzebnych pakietów.
 
+Dla rodziny Debian/Ubuntu:
 * `libsfml-dev`
 * `build-essential`
 
-#### Instalacja pakietów dla Debian/Ubuntu:
+Dla rodziny Arch Linux:
+*  `base-devel`
+*  `sfml`
+
+### Instalacja pakietów dla Linux:
+#### Debian/Ubuntu:
 * `sudo apt-get update`
 * `sudo apt-get install libsfml-dev`
 * `sudo apt-get install build-essential`
+
+#### Arch Linux:
+* `sudo pacman -S base-devel`
+* `sudo pacman -S sfml`
+
 
 ## Uruchomienie programu
 Dzięki utworzonemu plikowi `makefile` kompilacja jest prosta i intuicyjna. Polega na wejściu w lokalizację pobranego repozytorium oraz wpisaniu polecenia:
@@ -27,15 +42,13 @@ Powstanie wtedy plik wykonywalny `GraphVisualizer`, który należy wykonać pole
 `./GraphVisualizer`
 
 Jednak w przypadku, gdy powyższy sposób okaże się nieskuteczny, przewidziana jest również druga, zastępcza metoda kompilacji i uruchomienia. Po wejściu do katalogu repozytorium w terminalu należy wpisać:
-* `g++ -c src/*.cpp src/algorithms/*.cpp src/graphics/*.cpp`
+* `g++ -c src/*.cpp src/algorithms/*.cpp src/graphics/*.cpp -std=c++17`
 * `g++ *.o -o GraphVisualizer -lsfml-graphics -lsfml-window -lsfml-system`
 
 Ponadto powyższa metoda pozwala na dodanie flagi kompilacji `-DDEBUG`, która umożliwia ułatwioną analizę stanu grafu, tj. informacje dotyczące wierzchołków i krawędzi.
 
-## Wykorzystane narzędzia
-`C++ 17`
-`SFML 2.5.1` - najwyższa wspierana wersja biblioteki SFML,
-Zapewniane wsparcie dla wersji starszych, takich jak `2.4.2` czy `2.3.2` jest ograniczone, przykładowo nie jest możliwa obsługa technologii antyaliasing'u (ang. anti-aliasing). Ponadto dla wersji `2.5.1` automatycznie dobierany jest odpowiedni współczynnik próbkowania (ang. sampling level.). Autorzy pragną zaznaczyć, że instalowana domyślnie wersja biblioteki SFML może zależeć od wersji systemu operacyjnego użytkownika.
+## Uruchomienie w systemie Windows 10
+Autorzy przygotowali również wersję "Windows 10 Release" dla systemu Windows 10. Jedynym jej ograniczeniem jest brak wsparcia dla polskich znaków. Uruchomienie na systemie Windows 10 następuje po kliknięciu pliku wykonywalnego "GraphVisualizer.exe" w rozpakowanym archiwum pobranym z GitHuba - sekcja "Release". Obecna wersja release odpowiada wersji 1.3.0 programu. Należy wspomnieć, że może wystąpić potrzeba zezwolenia na wykonanie pliku w aplikacji Windows Defender (oraz innych programach antywirusowych).
 
 ## Zaimplementowane algorytmy
 Użytkownikowi końcowemu udostępniamy do dyspozycji kilka wartościowych dydaktycznie algorytmów. Są to: 
@@ -93,6 +106,28 @@ Następnie użytkownik znajduje się w polu docelowym - w polu wizualizacji wybr
 ```.
 ├── README.md
 ├── makefile
+├── RUNME.exe
+└── savedGraphs
+|     ├── bipartial1.gv
+|     ├── bipartial2.gv
+|     ├── clique7.gv
+|     ├── cycle1.gv
+|     ├── cycle2.gv
+|     ├── Dij_dir_example1.gv
+|     ├── Dij_dir_example2.gv
+|     ├── Dij_undir_example1.gv
+|     ├── Dij_undir_example2.gv
+|     ├── duzo.gv
+|     ├── MST_example1.gv
+|     ├── MST_example2.gv
+|     ├── niespojny.gv
+|     ├── path1.gv
+|     ├── path2.gv
+|     ├── SCC_example1.gv
+|     ├── SCC_example2.gv
+|     ├── tree1.gv
+|     ├── tree2.gv
+|     └── tree3.gv
 └── src
     └── algorithms
     |     ├── algorithms.hpp
@@ -109,27 +144,6 @@ Następnie użytkownik znajduje się w polu docelowym - w polu wizualizacji wybr
     |     ├── button.hpp
     |     ├── textbox.cpp
     |     └── textbox.hpp
-    └── savedGraphs
-    |     ├── bipartial1.gv
-    |     ├── bipartial2.gv
-    |     ├── clique7.gv
-    |     ├── cycle1.gv
-    |     ├── cycle2.gv
-    |     ├── Dij_dir_example1.gv
-    |     ├── Dij_dir_example2.gv
-    |     ├── Dij_undir_example1.gv
-    |     ├── Dij_undir_example2.gv
-    |     ├── duzo.gv
-    |     ├── MST_example1.gv
-    |     ├── MST_example2.gv
-    |     ├── niespojny.gv
-    |     ├── path1.gv
-    |     ├── path2.gv
-    |     ├── SCC_example1.gv
-    |     ├── SCC_example2.gv
-    |     ├── tree1.gv
-    |     ├── tree2.gv
-    |     └── tree3.gv
     |
     ├── app.cpp
     ├── app.hpp
@@ -147,7 +161,7 @@ Następnie użytkownik znajduje się w polu docelowym - w polu wizualizacji wybr
     └── vertex.hpp
 ```
 ## Wersja
-Obecna wersja programu: 1.2.0
+Obecna wersja programu: 1.3.0
 
 ## Autorzy
 Mikołaj Jaszcza | Michał Kierul | Marcin Wróbel | Marcin Sarnecki
