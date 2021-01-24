@@ -197,7 +197,7 @@ Application::Application()
     
     sf::Text textAddVertex( L"Dodaj wierzchołek", font , 20);
     sf::Text textRemoveVertex( L"Usuń wierzchołek", font , 20);
-    sf::Text textAddEdge( L"Dodaj krawedź", font , 20);
+    sf::Text textAddEdge( L"Dodaj krawędź", font , 20);
     sf::Text textEdgeEdit( L"Edycja krawędzi", font , 20);
     sf::Text textDeleteEdge( L"Usuń krawędź", font , 20);
     sf::Text textForceSimulation( L"Symulacja sił", font , 20);
@@ -255,7 +255,7 @@ Application::Application()
 
     buttonsChooseVertex.push_back(Button(190,24,85,45, textReturn, &font,ButtonReturnToAlgChoose));
 
-    window.create(sf::VideoMode(1920, 1080), "Projekt PWI",sf::Style::Default,settings);
+    window.create(sf::VideoMode(sf::VideoMode::getDesktopMode().width, sf::VideoMode::getDesktopMode().height), "Projekt PWI",sf::Style::Default,settings);
     window.setFramerateLimit(100);
 }
 

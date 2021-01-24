@@ -36,9 +36,9 @@ int main()
     int loop_x = los(0,9);
     int v = los(0,9), u = los(0,9);
     while(v == u) u = los(0,9);
-    app.G.AddEdge(loop_x, loop_x,(0,10),0);
-    app.G.AddEdge(u,v,(0,10),0);
-    app.G.AddEdge(v,u,(0,10),0);
+    app.G.AddEdge(loop_x, loop_x,los(0,10),0);
+    app.G.AddEdge(u,v,los(0,10),0);
+    app.G.AddEdge(v,u,los(0,10),0);
     app.Run();
     return 0;
 }

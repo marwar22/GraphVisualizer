@@ -1,4 +1,4 @@
-# Graph Visualizer 1.1.0
+# Graph Visualizer 1.2.0
 
 [![Project Status: Active – The project has reached a stable, usable state and is being actively developed.](http://www.repostatus.org/badges/latest/active.svg)](http://www.repostatus.org/#active) [![License: GPL v3](https://img.shields.io/badge/License-GPLv3-blue.svg)](https://www.gnu.org/licenses/gpl-3.0) [![Lines of Code](https://tokei.rs/b1/github/marwar22/GraphVisualizer)](https://github.com/marwar22/GraphVisualizer) [![GitHub contributors](https://img.shields.io/github/contributors/marwar22/GraphVisualizer)](https://GitHub.com/marwar22/GraphVisualizer/graphs/contributors/) [![Open Source Love svg1](https://badges.frapsoft.com/os/v1/open-source.svg?v=103)](https://github.com/ellerbrock/open-source-badges/)
 
@@ -147,7 +147,7 @@ Następnie użytkownik znajduje się w polu docelowym - w polu wizualizacji wybr
     └── vertex.hpp
 ```
 ## Wersja
-Obecna wersja programu: 1.1.0
+Obecna wersja programu: 1.2.0
 
 ## Autorzy
 Mikołaj Jaszcza | Michał Kierul | Marcin Wróbel | Marcin Sarnecki
